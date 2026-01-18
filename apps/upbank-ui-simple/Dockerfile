@@ -7,6 +7,8 @@ RUN npm ci
 
 # Now copy the rest of the application code
 COPY . .
+# During container builds, use runtime JSON config (VITE_USE_ENV_CONFIG=false)
+ENV VITE_USE_ENV_CONFIG=false
 RUN npm run build
 
 FROM nginx:alpine

@@ -2,7 +2,7 @@
 
 ## 1.1 Primary user journeys
 
-### Journey A — First time user (no token registered)
+### Journey A - First time user (no token registered)
 
 1. User opens the site (`/`)
 2. User clicks **Sign in**
@@ -16,13 +16,13 @@
 10. App calls AppSync `registerUpbankToken(token)`
 11. On success, app navigates to `/app` (dashboard/home)
 
-### Journey B — Returning user (token already registered)
+### Journey B - Returning user (token already registered)
 
 1. User opens site
 2. If already logged in (valid tokens), app calls `getTokenRegistered`
 3. If `registered=true`, go to `/app`
 
-### Journey C — Logout
+### Journey C - Logout
 
 1. User clicks **Logout**
 2. App clears local tokens
@@ -52,15 +52,23 @@
   * `expires_at` (epoch milliseconds)
 * Use `id_token` as the AppSync `Authorization` header
 
-> Session storage is simple for labs. For production, you’d think harder (XSS risk), but don’t block your lab.
+> Session storage is simple for labs. For production, you'd think harder (XSS risk), but don't block your lab.
 
 ---
 
-# 3) Environment variables (Vite)
+# 3) Configuration modes
+
+Controlled by `VITE_USE_ENV_CONFIG`:
+
+* `true` (default): read values from env vars / `.env.local` (better for local dev because missing vars throw).
+* `false`: load `/config/runtime-config.json` at runtime (recommended for container/K8s; mount via ConfigMap/Secret).
+
+## 3.1 Env variables (`VITE_USE_ENV_CONFIG=true`, default)
 
 Create `.env.local` (not committed):
 
 ```env
+VITE_USE_ENV_CONFIG=true
 VITE_COGNITO_DOMAIN=https://YOUR_DOMAIN.auth.ap-southeast-2.amazoncognito.com
 VITE_COGNITO_CLIENT_ID=YOUR_CLIENT_ID
 VITE_COGNITO_REDIRECT_URI=https://localhost:5173/callback
@@ -70,7 +78,24 @@ VITE_COGNITO_SCOPES=openid email profile
 VITE_APPSYNC_URL=https://xxxx.appsync-api.ap-southeast-2.amazonaws.com/graphql
 ```
 
-**⚠️ IMPORTANT: Vite MUST run with HTTPS protocol** (even locally), otherwise Cognito will reject the callback. 
+## 3.2 Runtime configuration file (`VITE_USE_ENV_CONFIG=false`)
+
+Create `public/config/runtime-config.json` (baked into the image and overridable via a ConfigMap):
+
+```json
+{
+  "cognitoDomain": "https://YOUR_DOMAIN.auth.ap-southeast-2.amazoncognito.com",
+  "clientId": "YOUR_CLIENT_ID",
+  "redirectUri": "https://localhost:5173/callback",
+  "logoutUri": "https://localhost:5173/",
+  "scopes": "openid email profile",
+  "appSyncUrl": "https://xxxx.appsync-api.ap-southeast-2.amazonaws.com/graphql"
+}
+```
+
+At runtime the app fetches `/config/runtime-config.json`. In Kubernetes, mount a ConfigMap (and Secret if needed) to that path to inject per-environment values without rebuilding the image. The Dockerfile sets `VITE_USE_ENV_CONFIG=false` during the build so the bundle expects this runtime file in containers.
+
+**?? IMPORTANT: Vite MUST run with HTTPS protocol** (even locally), otherwise Cognito will reject the callback.
 
 Configure in `vite.config.ts`:
 
@@ -92,23 +117,23 @@ Your deployed env (EKS/ALB) must also use HTTPS. Redirect/logout URLs must match
 
 ## 4.1 Routes
 
-* `/` → Landing page with Sign in button
-* `/callback` → OAuth callback handler (code exchange)
-* `/register-token` → Upbank token registration page
-* `/app` → Authenticated home/dashboard
-* `*` → 404 → redirect to `/`
+* `/` - Landing page with Sign in button
+* `/callback` - OAuth callback handler (code exchange)
+* `/register-token` - Upbank token registration page
+* `/app` - Authenticated home/dashboard
+* `*` - 404 - redirect to `/`
 
 ## 4.2 Page requirements
 
 ### Landing (`/`)
 
-* If not authenticated: show “Sign in”
-* If authenticated: show “Continue” (go to `/app`) and “Logout”
+* If not authenticated: show "Sign in"
+* If authenticated: show "Continue" (go to `/app`) and "Logout"
 * If authenticated but token not registered: go `/register-token`
 
 ### Callback (`/callback`)
 
-* Shows “Signing you in…”
+* Shows "Signing you in."
 * Reads `code` and exchanges it for tokens
 * Handles errors cleanly (show message + link back to `/`)
 
@@ -182,7 +207,7 @@ src/
 
 ## 7.1 `auth/config.ts`
 
-* Reads `import.meta.env.*`
+* Reads runtime config loaded from `/config/runtime-config.json`
 * Exports typed config values
 * Validates they exist; if missing show a clear error
 
@@ -270,14 +295,14 @@ GraphQL operations to embed:
 
 1. Start app: `npm run dev`
 2. Go `/`
-3. Click “Sign in”
+3. Click "Sign in"
 4. Complete login
 5. Verify:
 
    * callback works
    * tokens saved in sessionStorage
 6. Navigate to `/register-token`
-7. Paste any “fake token” and submit
+7. Paste any "fake token" and submit
 8. Verify:
 
    * AppSync mutation returns success
@@ -285,9 +310,9 @@ GraphQL operations to embed:
 
 ---
 
-# 10) Docker + EKS (when you’re ready)
+# 10) Docker + EKS (when you're ready)
 
-For Phase 3 you’ll likely:
+For Phase 3 you'll likely:
 
 * build static site
 * serve via Nginx container

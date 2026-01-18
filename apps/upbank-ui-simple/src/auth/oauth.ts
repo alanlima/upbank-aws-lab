@@ -1,4 +1,4 @@
-import config from './config'
+import { getAuthConfig } from './config'
 import {
   clearStoredVerifier,
   generateChallenge,
@@ -7,6 +7,7 @@ import {
 } from './pkce'
 
 const buildAuthorizeParams = async () => {
+  const config = getAuthConfig()
   const verifier = generateVerifier()
   storeVerifier(verifier)
   const challenge = await generateChallenge(verifier)
@@ -27,10 +28,12 @@ const buildAuthorizeParams = async () => {
 export const login = async () => {
   clearStoredVerifier()
   const params = await buildAuthorizeParams()
+  const config = getAuthConfig()
   window.location.href = `${config.cognitoDomain}/oauth2/authorize?${params.toString()}`
 }
 
 export const logout = () => {
+  const config = getAuthConfig()
   const params = new URLSearchParams({
     client_id: config.clientId,
     logout_uri: config.logoutUri,

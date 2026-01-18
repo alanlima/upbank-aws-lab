@@ -1,4 +1,4 @@
-import config from '../auth/config'
+import { getAuthConfig } from '../auth/config'
 import { getIdToken } from '../auth/tokenStore'
 
 export const GET_STATUS = /* GraphQL */ `
@@ -34,12 +34,13 @@ type AppSyncResponse<T> = {
 }
 
 export const callAppSync = async <T>(query: string, variables?: Record<string, unknown>) => {
+  const { appSyncUrl } = getAuthConfig()
   const idToken = getIdToken()
   if (!idToken) {
     throw new Error('Not authenticated')
   }
 
-  const response = await fetch(config.appSyncUrl, {
+  const response = await fetch(appSyncUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

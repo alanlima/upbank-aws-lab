@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchRegistrationStatus } from '../api/appsync'
-import config from '../auth/config'
+import { getAuthConfig } from '../auth/config'
 import { clearStoredVerifier, getStoredVerifier } from '../auth/pkce'
 import { saveTokens } from '../auth/tokenStore'
 
@@ -17,6 +17,7 @@ const Callback = () => {
 
   useEffect(() => {
     const exchangeCode = async () => {
+      const config = getAuthConfig()
       const code = searchParams.get('code')
       const verifier = getStoredVerifier()
 
