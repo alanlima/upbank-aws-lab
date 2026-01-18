@@ -218,6 +218,9 @@ resource "kubernetes_namespace_v1" "frontend" {
   depends_on = [ module.eks ]
 }
 
+# --------------------------
+# Monitoring Module
+# --------------------------
 module "monitoring" {
     source = "../modules/monitoring"
 
@@ -228,4 +231,29 @@ module "monitoring" {
       kubernetes = kubernetes
       helm = helm
     }
+}
+
+# --------------------------
+# Application Module
+# --------------------------
+module "application" {
+    source = "../modules/app_upbank"
+
+    name_prefix = "upbank"
+    environment = var.environment
+    aws_region  = var.aws_region
+
+    cognito_domain_prefix = "upbank-${var.environment}"
+
+    callback_urls = [
+        "https://localhost:5173/callback",
+        "https://k8s-frontend-nginxing-b0593a1b19-718352126.ap-southeast-2.elb.amazonaws.com/callback"
+    ]
+
+    logout_urls = [ 
+        "https://localhost:5173/",
+        "https://k8s-frontend-nginxing-b0593a1b19-718352126.ap-southeast-2.elb.amazonaws.com/"
+     ]
+
+     tags = local.tags
 }

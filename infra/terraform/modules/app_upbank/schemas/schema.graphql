@@ -1,0 +1,23 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    me: User!
+    getTokenRegistered: TokenRegistrationStatus!
+}
+
+type Mutation {
+    registerToken(token: String!): TokenRegistrationStatus!
+}
+
+type User {
+    sub: ID!
+    email: String!
+}
+
+type TokenRegistrationStatus {
+  registered: Boolean!
+  updatedAt: AWSDateTime
+}

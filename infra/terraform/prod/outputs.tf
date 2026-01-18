@@ -62,3 +62,15 @@ output "kubectl_config_command" {
   description = "Command to configure kubectl"
   value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${module.eks.cluster_name} --alias upbank-${var.environment}"
 }
+
+output "appsync_graphql_url" {
+  value = module.application.appsync_graphql_url
+}
+
+output "cognito_domain_url" {
+  value = module.application.cognito_domain_url
+}
+
+output "cognito_app_client_id" {
+  value = module.application.cognito_app_client_id
+}
