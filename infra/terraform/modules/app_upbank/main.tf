@@ -87,6 +87,27 @@ resource "aws_cognito_user_pool_domain" "this" {
 # --------------------------
 # AppSync GraphQL API
 # --------------------------
+# resource "aws_cloudwatch_log_group" "appsync" {
+#   name = "/aws/appsync/${local.name}-graphql-api"
+#   retention_in_days = 30
+#   tags = local.common_tags
+# }
+
+# resource "aws_cognito_log_delivery_configuration" "appsync" {
+#   user_pool_id = aws_cognito_user_pool.this.id
+
+#   log_configurations {
+#     event_source = "userAuthEvents"
+#     log_level    = "INFO"
+
+#     cloud_watch_logs_configuration {
+#       log_group_arn = aws_cloudwatch_log_group.appsync.arn
+#     }
+#   }
+# }
+
+
+
 resource "aws_appsync_graphql_api" "this" {
     name = "${local.name}-graphql-api"
     authentication_type = "AMAZON_COGNITO_USER_POOLS"
@@ -95,6 +116,10 @@ resource "aws_appsync_graphql_api" "this" {
         user_pool_id = aws_cognito_user_pool.this.id
         aws_region   = var.aws_region
         default_action = "ALLOW"
+    }
+    log_config {
+      cloudwatch_logs_role_arn = aws_iam_role.appsync_role.arn
+      field_log_level          = "ALL"
     }
 
     schema = file(local.schema_file)
@@ -115,8 +140,8 @@ data "aws_iam_policy_document" "appsync_assume_role" {
   }
 }
 
-resource "aws_iam_role" "appsync_dynamodb_role" {
-  name = "${local.name}-appsync-dynamodb-role"
+resource "aws_iam_role" "appsync_role" {
+  name = "${local.name}-appsync-role"
   assume_role_policy = data.aws_iam_policy_document.appsync_assume_role.json
   tags = local.common_tags
 }
@@ -133,8 +158,13 @@ data "aws_iam_policy_document" "appsync_dynamodb_policy" {
 
 resource "aws_iam_role_policy" "appsync_dynamodb" {
     name = "${local.name}-appsync-dynamodb-policy"
-    role = aws_iam_role.appsync_dynamodb_role.id
+    role = aws_iam_role.appsync_role.id
     policy = data.aws_iam_policy_document.appsync_dynamodb_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "appsync_log" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+  role = aws_iam_role.appsync_role.name
 }
 
 # --------------------------
@@ -144,12 +174,21 @@ resource "aws_appsync_datasource" "dynamodb" {
     api_id = aws_appsync_graphql_api.this.id
     name   = "TokenRegistryTable"
     type   = "AMAZON_DYNAMODB"
-    service_role_arn = aws_iam_role.appsync_dynamodb_role.arn
+    service_role_arn = aws_iam_role.appsync_role.arn
 
     dynamodb_config {
         table_name = aws_dynamodb_table.token_registry.name
         region = var.aws_region
     }  
+}
+
+# Create a None data source
+resource "aws_appsync_datasource" "none" {
+  api_id = aws_appsync_graphql_api.this.id
+  name   = "NoneDataSource"
+  type   = "NONE"
+  
+  description = "Local resolver data source for AppSync"
 }
 
 # --------------------------
@@ -159,8 +198,7 @@ resource "aws_appsync_resolver" "me" {
   api_id = aws_appsync_graphql_api.this.id
   type = "Query"
   field = "me"
-#   kind = "UNIT"
-  data_source = aws_appsync_datasource.dynamodb.name
+  data_source = aws_appsync_datasource.none.name
 
   runtime {
     name = "APPSYNC_JS"
