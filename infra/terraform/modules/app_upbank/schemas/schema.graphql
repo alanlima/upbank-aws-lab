@@ -6,6 +6,9 @@ schema {
 type Query {
     me: User!
     getTokenRegistered: TokenRegistrationStatus!
+
+    accounts: [UpAccount!]!
+    account(id: ID!): UpAccount
 }
 
 type Mutation {
@@ -20,4 +23,15 @@ type User {
 type TokenRegistrationStatus {
   registered: Boolean!
   updatedAt: AWSDateTime
+}
+
+type UpAccount {
+  id: ID!
+  displayName: String
+  accountType: String
+  ownershipType: String
+  balanceValue: String
+  balanceValueInBaseUnits: Int
+  currencyCode: String
+  createdAt: AWSDateTime
 }
