@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upbank-ui-simple
+  namespace: frontend
+  labels:
+    project: upbank-lab
+    app: upbank-ui-simple
+    environment: prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: upbank-ui-simple
+  template:
+    metadata:
+      labels:
+        project: upbank-lab
+        app: upbank-ui-simple
+        environment: prod
+    spec:
+      containers:
+        - name: app
+          image: alanrlima/awslab-upbank-ui-simple:v3
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /usr/share/nginx/html/config/runtime-config.json
+              subPath: runtime-config.json
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: upbank-ui-simple-runtime-config

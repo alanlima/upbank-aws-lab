@@ -74,3 +74,7 @@ output "cognito_domain_url" {
 output "cognito_app_client_id" {
   value = module.application.cognito_app_client_id
 }
+
+output "acm_self_signed_certificate_arn" {
+  value = aws_acm_certificate.imported.arn
+}

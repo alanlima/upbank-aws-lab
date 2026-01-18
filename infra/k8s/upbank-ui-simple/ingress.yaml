@@ -1,11 +1,28 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  name: nginx-ingress
+  name: upbank-ui-simple-svc
   namespace: frontend
   labels:
     project: upbank-lab
-    app: nginx
+    app: upbank-ui-simple
+    environment: prod
+spec:
+  selector:
+    app: upbank-ui-simple
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: upbank-ui-simple-ingress
+  namespace: frontend
+  labels:
+    project: upbank-lab
+    app: upbank-ui-simple
     environment: prod
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -22,6 +39,6 @@ spec:
            pathType: Prefix
            backend:
              service:
-               name: nginx-svc
+               name: upbank-ui-simple-svc
                port:
                  number: 80

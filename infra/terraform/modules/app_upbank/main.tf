@@ -87,13 +87,13 @@ resource "aws_cognito_user_pool_domain" "this" {
 # --------------------------
 # AppSync GraphQL API
 # --------------------------
-# resource "aws_cloudwatch_log_group" "appsync" {
-#   name = "/aws/appsync/${local.name}-graphql-api"
+# resource "aws_cloudwatch_log_group" "cognito" {
+#   name = "/aws/cognito/${local.name}-access-logs"
 #   retention_in_days = 30
 #   tags = local.common_tags
 # }
 
-# resource "aws_cognito_log_delivery_configuration" "appsync" {
+# resource "aws_cognito_log_delivery_configuration" "cognito" {
 #   user_pool_id = aws_cognito_user_pool.this.id
 
 #   log_configurations {
@@ -101,12 +101,19 @@ resource "aws_cognito_user_pool_domain" "this" {
 #     log_level    = "INFO"
 
 #     cloud_watch_logs_configuration {
-#       log_group_arn = aws_cloudwatch_log_group.appsync.arn
+#       log_group_arn = aws_cloudwatch_log_group.cognito.arn
+#     }
+#   }
+
+#   log_configurations {
+#     event_source = "userNotification"
+#     log_level    = "INFO"
+
+#     cloud_watch_logs_configuration {
+#       log_group_arn = aws_cloudwatch_log_group.cognito.arn
 #     }
 #   }
 # }
-
-
 
 resource "aws_appsync_graphql_api" "this" {
     name = "${local.name}-graphql-api"

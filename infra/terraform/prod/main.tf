@@ -102,6 +102,40 @@ module "eks" {
   }
 }
 
+resource "tls_private_key" "self_signed_ca" {
+  algorithm = "RSA"
+  rsa_bits = 2048
+}
+
+resource "tls_self_signed_cert" "self_signed" {
+  private_key_pem = tls_private_key.self_signed_ca.private_key_pem
+
+  subject {
+    common_name = var.app_name
+    organization = "aws lab"
+  }
+
+  validity_period_hours = 24 * 365
+  early_renewal_hours = 24 * 30
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+
+    dns_names = [
+        var.app_name,
+        "*.${var.app_name}",
+        "localhost"
+    ]
+}
+
+resource "aws_acm_certificate" "imported" {
+  private_key      = tls_private_key.self_signed_ca.private_key_pem
+  certificate_body = tls_self_signed_cert.self_signed.cert_pem
+}
+
 # TODO: the access entry is required to give permission for the cluster, but it needs to do via role (ideally)
 data "aws_iam_user" "eks_user" {
   user_name = var.eks_admin_user_name

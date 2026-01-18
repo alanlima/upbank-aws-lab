@@ -1,0 +1,8 @@
+{
+  "cognitoDomain": "https://upbank-prod.auth.ap-southeast-2.amazoncognito.com",
+  "clientId": "1efrn745291ejpcchupu9q8ful",
+  "redirectUri": "https://k8s-frontend-upbankui-3ce003f283-1967195381.ap-southeast-2.elb.amazonaws.com/callback",
+  "logoutUri": "https://k8s-frontend-upbankui-3ce003f283-1967195381.ap-southeast-2.elb.amazonaws.com/",
+  "scopes": "openid email profile",
+  "appSyncUrl": "https://knbqeii3jbhfvenicbrqrmjg3i.appsync-api.ap-southeast-2.amazonaws.com/graphql"
+}
