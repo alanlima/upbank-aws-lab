@@ -2,7 +2,7 @@ locals {
   tags = {
    Environment = var.environment
    Application = var.app_name
-   ManagedBy   = "Terraform"
+   ManagedBy   = "terraform"
    DataClassification = "sensitive"
   }
 
@@ -96,8 +96,8 @@ module "eks" {
     default = {
         instance_types = var.node_instance_types
         min_size = 1
-        max_size = 3
-        desired_capacity = 2
+        max_size = 6
+        desired_size = 2
     }
   }
 }
@@ -132,24 +132,22 @@ resource "time_sleep" "wait_for_iam_propagation" {
 
 data "aws_eks_cluster" "this" {
     name = module.eks.cluster_name
-    depends_on = [module.eks]
 }
 
 data "aws_eks_cluster_auth" "this" {
   name = module.eks.cluster_name
-  depends_on = [module.eks]
 }
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.this.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
 provider "helm" {
   kubernetes = {
-    host                   = data.aws_eks_cluster.this.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.this.certificate_authority[0].data)
+    host                   = module.eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
     token                  = data.aws_eks_cluster_auth.this.token
   }
 }
@@ -213,8 +211,21 @@ resource "kubernetes_namespace_v1" "frontend" {
   metadata {
     name = "frontend"
     labels = {
-        ManagedBy = "Terraform"
+        "app.kubernetes.io/managed-by" = "terraform"
+        "app.kubernetes.io/part-of" = var.app_name
     }
   }
   depends_on = [ module.eks ]
+}
+
+module "monitoring" {
+    source = "../modules/monitoring"
+
+    project_name = var.app_name
+    namespace = "monitoring"
+
+    providers = {
+      kubernetes = kubernetes
+      helm = helm
+    }
 }
