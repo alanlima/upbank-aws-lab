@@ -1,7 +1,7 @@
 locals {
     name = "${var.name_prefix}-${var.environment}"
 
-    schema_file = coalesce(var.schema_path, "${path.module}/schemas/schema.graphql")
+    schema_file = "${path.module}/schemas/schema.graphql"
 
     common_tags = merge(
         var.tags,
@@ -87,34 +87,6 @@ resource "aws_cognito_user_pool_domain" "this" {
 # --------------------------
 # AppSync GraphQL API
 # --------------------------
-# resource "aws_cloudwatch_log_group" "cognito" {
-#   name = "/aws/cognito/${local.name}-access-logs"
-#   retention_in_days = 30
-#   tags = local.common_tags
-# }
-
-# resource "aws_cognito_log_delivery_configuration" "cognito" {
-#   user_pool_id = aws_cognito_user_pool.this.id
-
-#   log_configurations {
-#     event_source = "userAuthEvents"
-#     log_level    = "INFO"
-
-#     cloud_watch_logs_configuration {
-#       log_group_arn = aws_cloudwatch_log_group.cognito.arn
-#     }
-#   }
-
-#   log_configurations {
-#     event_source = "userNotification"
-#     log_level    = "INFO"
-
-#     cloud_watch_logs_configuration {
-#       log_group_arn = aws_cloudwatch_log_group.cognito.arn
-#     }
-#   }
-# }
-
 resource "aws_appsync_graphql_api" "this" {
     name = "${local.name}-graphql-api"
     authentication_type = "AMAZON_COGNITO_USER_POOLS"
@@ -159,7 +131,7 @@ data "aws_iam_policy_document" "appsync_dynamodb_policy" {
         "dynamodb:GetItem",
         "dynamodb:PutItem"
     ]
-    resources = [ aws_dynamodb_table.token_registry.arn]
+    resources = [ aws_dynamodb_table.token_registry.arn ]
   }
 }
 
@@ -175,7 +147,7 @@ resource "aws_iam_role_policy_attachment" "appsync_log" {
 }
 
 # --------------------------
-# AppSync Datasource (DynamoDB)
+# AppSync Datasources
 # --------------------------
 resource "aws_appsync_datasource" "dynamodb" {
     api_id = aws_appsync_graphql_api.this.id

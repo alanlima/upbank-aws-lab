@@ -281,12 +281,12 @@ module "application" {
 
     callback_urls = [
         "https://localhost:5173/callback",
-        "https://k8s-frontend-nginxing-b0593a1b19-718352126.ap-southeast-2.elb.amazonaws.com/callback"
+        "https://k8s-frontend-upbankui-3ce003f283-1967195381.ap-southeast-2.elb.amazonaws.com/callback"
     ]
 
     logout_urls = [ 
         "https://localhost:5173/",
-        "https://k8s-frontend-nginxing-b0593a1b19-718352126.ap-southeast-2.elb.amazonaws.com/"
+        "https://k8s-frontend-upbankui-3ce003f283-1967195381.ap-southeast-2.elb.amazonaws.com/"
      ]
 
      tags = local.tags

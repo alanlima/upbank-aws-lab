@@ -49,13 +49,6 @@ variable "oauth_scopes" {
   default = ["openid", "email", "profile"]
 }
 
-# ---- AppSync ---- #
-variable "schema_path" {
-  description = "Path to the GraphQL schema file (optional override)"
-  type        = string
-  default     = null
-}
-
 # ---- DynamoDB ---- #
 variable "dynamodb_billing_mode" {
   description = "Billing mode for the DynamoDB table"
