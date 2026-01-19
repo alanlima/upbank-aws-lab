@@ -1,8 +1,0 @@
-{
-  "cognitoDomain": "https://YOUR_DOMAIN.auth.ap-southeast-2.amazoncognito.com",
-  "clientId": "YOUR_CLIENT_ID",
-  "redirectUri": "https://localhost:5173/callback",
-  "logoutUri": "https://localhost:5173/",
-  "scopes": "openid email profile",
-  "appSyncUrl": "https://xxxx.appsync-api.ap-southeast-2.amazonaws.com/graphql"
-}
