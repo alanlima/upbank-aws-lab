@@ -1,19 +1,31 @@
-name: infra
+name: infra-plan
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infra/terraform/prod**'
   push:
+    branches:
+      - '**'
+      - '!main'
     paths:
       - 'infra/terraform/prod**'
   workflow_dispatch: {}
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 jobs:
-  terraform:
+  plan-and-comment:
+    name: Run Terraform Plan and Post PR Comment
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
@@ -52,18 +64,25 @@ jobs:
       - name: Terraform Validate
         working-directory: ./infra/terraform/prod
         run: terraform validate
-        
+      
+      - name: Terraform Format Check
+        working-directory: ./infra/terraform/prod
+        run: terraform fmt -check -recursive
+      
       - name: Terraform Plan
         working-directory: ./infra/terraform/prod
         run: terraform plan -out tfplan -var-file=terraform.tfvars
 
-      - name: Terraform Apply
-        working-directory: ./infra/terraform/prod
-        run: terraform apply tfplan
+      - name: Post Terraform Plan Comment in PR
+        uses: towardsthecloud/terraform-plan-pr-commenter@v1
+        with:
+          planfile: tfplan
+          working-directory: ./infra/terraform/prod
+          aws-region: ap-southeast-2
     
       - name: Upload Artifact
         uses: actions/upload-artifact@v6.0.0
         with:
           name: terraform-prod-plan
           path: ./infra/terraform/prod/tfplan
-          retention-days: 5
+          retention-days: 2
