@@ -1,6 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,react,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,react,node
 
+### Local secrets (NEVER commit) ###
+.secrets
+.act/secrets
+.env.local
+
 ### Node ###
 # Logs
 logs

@@ -1,0 +1,4 @@
+# Local act configuration for GitHub Actions testing
+--workflows=.github/workflows
+--secret-file=.act/secrets
+--container-daemon-socket=npipe:////./pipe/docker_engine

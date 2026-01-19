@@ -1,5 +1,7 @@
 import { util } from '@aws-appsync/utils';
 
+// Function to get Upbank token from DynamoDB
+
 export function request(ctx) {
   const sub = ctx.identity?.sub;
   if(!sub) util.unauthorized();
