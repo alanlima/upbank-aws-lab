@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "hashicorp.terraform",
+    "amazonwebservices.aws-toolkit-vscode",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "redhat.vscode-yaml"
+  ],
+  "unwantedRecommendations": [
+    "angular.ng-template",
+    "johnpapa.angular2",
+    "cyrilletuzi.angular-schematics",
+    "nrwl.angular-console",
+    "infinity1207.angular2-switcher",
+    "SimonTest.simontest"
+  ]
+}
