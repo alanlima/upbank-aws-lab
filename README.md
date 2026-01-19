@@ -78,7 +78,7 @@ The platform is composed of:
 
   * Amazon EKS (frontend only)
 
-![AWS UpBank Architecture Diagram](docs/images/AWS%20UpBank%20Diagram.drawio.png)
+![AWS UpBank Architecture Diagram](docs/images/aws-upbank-diagram.drawio.png)
 
 ---
 
