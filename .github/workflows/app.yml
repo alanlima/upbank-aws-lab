@@ -1,0 +1,93 @@
+name: app
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "app/**"
+    workflow_dispatch: {}
+
+permissions:
+    contents: read
+    id-token: write
+    # packages: write
+
+jobs:
+    # build:
+    #     name: Build App
+    #     runs-on: ubuntu-latest
+
+    #     steps:
+    #         - name: Checkout repository
+    #           uses: actions/checkout@v5
+
+    #         - name: Set up Node.js
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: "24"
+    #         - name: Install dependencies
+    #           run: npm install
+    #           working-directory: ./app
+    #         - name: Run Build
+    #           run: npm run build
+    #           working-directory: ./app
+
+    #         - name: Upload Artifact
+    #           uses: actions/upload-artifact@v4
+    #           with:
+    #               name: app-build
+    #               path: ./app/dist
+    #               retention-days: 1
+
+    docker-build-push:
+        name: Build and Push Docker Image
+        runs-on: ubuntu-latest
+        outputs:
+            IMAGE_ID: ${{ vars.DOCKER_HUB_USERNAME }}/awslab-upbank-ui:${{ env.COMMIT_SHA }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
+
+            - name: Set build metadata
+              run: |
+                  echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+                  echo "COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ vars.DOCKER_HUB_USERNAME }}
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build and Push Docker Image
+              uses: docker/build-push-action@v6
+              with:
+                  context: "./app"
+                  push: true
+                  tags: ${{ vars.DOCKER_HUB_USERNAME }}/awslab-upbank-ui:${{ env.COMMIT_SHA  }}
+                  build-args: |
+                      COMMIT_SHA=${{ env.COMMIT_SHA }}
+                      BUILD_DATE=${{ env.BUILD_DATE }}
+
+    deploy:
+        name: Deploy Application
+        runs-on: ubuntu-latest
+        needs: docker-build-push
+        steps:
+            - name: Rollout Image to EKS
+              uses: ianbelcher/eks-kubectl-action@master
+              with:
+                aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws_region: 'ap-southeast-2'
+                cluster_name: ${{ vars.CLUSTER_NAME }}
+                # eks_role_arn: ${{ vars.EKS_ROLE_ARN }}
+                kubernetes_version: v1.21.0
+                args: set image -n frontend --record deployment/upbank-ui app=${{ needs.docker-build-push.outputs.IMAGE_ID }}
