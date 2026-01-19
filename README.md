@@ -2,20 +2,19 @@
 
 ## 1. Purpose of This Lab
 
-This repository contains a **deliberately realistic, end-to-end AWS architecture lab** designed to explore how modern cloud applications are:
+This repository contains a **deliberately realistic, end-to-end AWS architecture lab** focused on how modern cloud applications are:
 
-* **provisioned** | **secured** | **operated** | **observed** | **delivered**
+* **designed**
+* **secured**
+* **operated**
+* **integrated**
+* **evolved**
 
-using **production-grade AWS and Kubernetes patterns**.
+using **production-grade AWS managed services and Kubernetes patterns**.
 
-The lab integrates with the **Up Bank public API** to introduce real external dependencies and security considerations, while intentionally avoiding shortcuts that hide operational complexity.
+The lab integrates with the **Up Bank public API** to introduce real external dependencies, real authentication constraints, and real security trade-offs — while intentionally avoiding shortcuts that hide how systems actually behave.
 
-The focus is **not just building something that works**, but understanding:
-
-* *why it works*
-* *how it fails*
-* *how to observe it*
-* *how to operate it safely*
+The goal is **architectural understanding**, not just functionality.
 
 ---
 
@@ -25,11 +24,11 @@ A fintech-style application needs to:
 
 * Authenticate users securely
 * Allow users to connect their Up Bank account using a personal access token
-* Retrieve and display banking account information
+* Retrieve and display account information
 * Expose APIs suitable for frontend consumption
-* Run on a scalable, cloud-native platform
-* Be diagnosable in production-like conditions
-* Be reproducible, auditable, and cost-aware
+* Scale without managing backend servers
+* Keep sensitive tokens off the client
+* Remain reproducible, observable, and cost-aware
 
 ---
 
@@ -37,13 +36,12 @@ A fintech-style application needs to:
 
 This lab is guided by the following principles:
 
-* **Infrastructure as Code first**
-* **Managed services where possible**
+* **Managed services first**
+* **Identity-centric security (IAM > networking)**
 * **No secrets in the frontend**
-* **Authentication before authorization**
-* **Observability is not optional**
-* **Failures are learning opportunities**
+* **Serverless backend where possible**
 * **Incremental realism over shortcuts**
+* **Cost and scale matter, even in labs**
 
 ---
 
@@ -52,370 +50,414 @@ This lab is guided by the following principles:
 The platform is composed of:
 
 * **Frontend**
-  React application hosted on Kubernetes (EKS)
+
+  * React SPA hosted on Amazon EKS
+  * Served via Nginx behind an Application Load Balancer
 
 * **Authentication**
-  Amazon Cognito (OIDC / OAuth2)
+
+  * Amazon Cognito (OAuth2 / OIDC, Hosted UI, PKCE)
 
 * **API Layer**
-  AWS AppSync (GraphQL)
+
+  * AWS AppSync (managed GraphQL)
 
 * **Integration Layer**
-  AWS Lambda (Up token vault and Up API integration)
 
-* **Secrets Management**
-  AWS Secrets Manager
-  *(with a planned migration path to DynamoDB for scale and reporting)*
+  * AppSync pipeline resolvers (no Lambda)
+
+* **Token Storage**
+
+  * Amazon DynamoDB (user-scoped token records)
+
+* **External Dependency**
+
+  * Up Bank public REST API (HTTPS)
 
 * **Compute Platform**
-  Amazon EKS with managed node groups
 
-* **Ingress & Networking**
-  AWS Application Load Balancer via Kubernetes Ingress
+  * Amazon EKS (frontend only)
 
-* **Observability & Monitoring**
-
-  * **Prometheus + Grafana** (primary Kubernetes & workload observability)
-  * **CloudWatch** (AWS control plane & managed services)
-
-* **Infrastructure as Code**
-  Terraform with remote state in S3
+![AWS UpBank Architecture Diagram](docs/images/AWS%20UpBank%20Diagram.drawio.png)
 
 ---
 
-## 5. Phased Implementation Plan
+## 5. Phased Implementation Overview
 
-### Phase 1 – Infrastructure, Kubernetes & Baseline Observability (Completed)
-
-**Primary Goal:**
-Establish a **stable, observable Kubernetes platform on AWS** that can host applications and be debugged realistically.
+This lab was implemented incrementally to reflect how real systems evolve.
 
 ---
 
-### What Was Implemented
+## Phase 1 — Infrastructure & Kubernetes Baseline (Completed)
 
-#### Infrastructure
+### Goal
 
-* VPC with:
+Establish a **stable, debuggable Kubernetes platform** on AWS.
 
-  * public subnets
-  * private subnets
-  * NAT Gateway for outbound access
-* Amazon EKS control plane
-* Managed EC2-based node group
-* Required IAM roles and service-linked roles
+### Implemented
 
-#### Kubernetes Platform
-
+* VPC with public/private subnets
+* NAT Gateway for outbound access
+* Amazon EKS cluster
+* Managed EC2 node group
 * Core EKS addons:
 
   * VPC CNI
-  * kube-proxy
   * CoreDNS
-* AWS Load Balancer Controller (via Helm)
-* Placeholder `nginx` Deployment
-* Service + Ingress to expose workloads publicly
-* Public access via **ALB DNS hostname** (no custom DNS)
+  * kube-proxy
+* AWS Load Balancer Controller
+* Baseline `nginx` deployment exposed via ALB
 
-#### Observability (Baseline)
+### Key Learnings
 
-* Kubernetes-native debugging using:
-
-  * node conditions
-  * pod lifecycle events
-  * `kubectl describe`
-* CloudWatch visibility into:
-
-  * EKS control plane logs
-  * AWS service interactions
-* Validation that issues can be diagnosed **without SSH**
-
----
-
-### Real Issues Encountered (Intentionally Valuable)
-
-This phase surfaced **real EKS operational issues**, including:
-
-* Node groups stuck in `CREATING`
-* Nodes registering but remaining `NotReady`
-* VPC CNI not initialized
-* Missing addons and permissions causing silent failures
-
-Important clarifications:
-
-* **Instance size did not cause instability**
-* **Private-only EKS endpoints can work correctly**
-* Root causes were **missing steps and incomplete platform wiring**, not hardware limits
-
----
-
-### Key Learnings from Phase 1
-
-* EKS failures are often **networking or addon-related**
 * Nodes can exist but still be unusable
-* The AWS VPC CNI is a **hard dependency** for node readiness
-* Observability is required to debug infrastructure failures
-* A running cluster is not the same as a **healthy** cluster
+* VPC CNI is a hard dependency
+* Most EKS failures are wiring issues, not instance size
+* Observability is mandatory to debug infra
 
 ---
 
-### Outcome of Phase 1
+## Phase 2 — Observability & Monitoring (Prometheus + Grafana)
 
-By the end of Phase 1:
+### Goal
 
-* Infrastructure is fully reproducible
-* EKS control plane is reachable from local machine
-* Nodes successfully join the cluster
-* Kubernetes system components can be inspected
-* Ingress dynamically provisions a public ALB
-* Placeholder application is reachable
-* Failures can be explained using signals, not guesswork
+Introduce **production-style Kubernetes observability**.
 
-This establishes a **trustworthy platform baseline**.
-
----
-
-## 6. Phase 2 – Monitoring & Observability (Prometheus + Grafana)
-
-**Primary Goal:**
-Introduce **production-style observability** aligned with enterprise Kubernetes environments (e.g. CBA).
-
----
-
-### Why Prometheus + Grafana
-
-* Matches real-world Kubernetes monitoring practices
-* Kubernetes-native metrics model
-* Clear separation between:
-
-  * platform health
-  * application health
-* Complements (does not replace) AWS CloudWatch
-
----
-
-### What Will Be Implemented
+### Implemented
 
 * `kube-prometheus-stack` via Helm
 * Prometheus:
 
-  * node-exporter
+  * node exporter
   * kube-state-metrics
-  * workload metrics
-* Grafana:
+* Grafana dashboards:
 
-  * cluster health dashboards
-  * node and pod resource dashboards
-  * deployment health and restarts
-* Optional alerting:
+  * cluster health
+  * node & pod resources
+  * deployment stability
 
-  * Node NotReady
-  * Pod CrashLoopBackOff
-  * Resource saturation
-  * Deployment drift
+### Outcome
 
----
+Clear separation between:
 
-### Monitoring Outcomes
-
-After this phase, the platform can answer:
-
-* *Is the cluster healthy?*
-* *Is this an application issue or a platform issue?*
-* *What changed before the failure?*
-* *Which team/layer owns the problem?*
+* platform issues
+* application issues
+* infrastructure misconfiguration
 
 ---
 
-## 7. Phase 3 – Authentication (Cognito)
+## Phase 3 — Authentication (Cognito)
+
+### Goal
+
+Introduce **secure user authentication** without managing credentials.
+
+### Implemented
 
 * Amazon Cognito User Pool
-* OAuth2 / OIDC authentication
-* Frontend login via Hosted UI
-* JWT-based authorization for AppSync
+* OAuth2 Authorization Code Flow with PKCE
+* Hosted UI login
+* JWT issuance
+* AppSync configured with Cognito User Pool authentication
+
+### Outcome
+
+* Frontend never handles passwords
+* Identity is verified once
+* JWT becomes the trust boundary
 
 ---
 
-## 8. Phase 4 – API Layer (GraphQL)
+## Phase 4 — API Layer & External Integration (AppSync)
+
+### Goal
+
+Expose a **GraphQL API** without running backend servers.
+
+### Implemented
 
 * AWS AppSync GraphQL API
-* Schema aligned with Up Bank domain
-* Lambda resolvers for REST → GraphQL translation
-* Cognito-protected API access
+* JS runtime resolvers only (no VTL)
+* Pipeline resolvers:
+
+  1. Identify user via Cognito JWT
+  2. Retrieve Up Bank token from DynamoDB
+  3. Call Up Bank REST API via HTTP data source
+  4. Map REST → GraphQL
+
+### Important Notes
+
+* No Lambda is used in this phase
+* AppSync orchestrates DynamoDB + HTTP directly
+* Tokens are never returned to the client
 
 ---
 
-## 9. Phase 5 – Secure Token Handling
+## Phase 5 — Token Storage Strategy
 
-* Lambda-based token vault
-* AWS Secrets Manager for secure storage
-* Tokens scoped per authenticated user
-* Least-privilege IAM permissions
-* Auditable access via CloudTrail
+### Design Decision
 
----
+Tokens are stored in **DynamoDB**, not Secrets Manager.
 
-## 10. Phase 6 – Frontend Application
+**Why DynamoDB**
 
-* React application
-* User onboarding flow (connect Up Bank token)
-* Account listing and details
-* Containerized deployment to EKS
+* Better horizontal scalability
+* Lower cost at scale
+* Easier schema evolution
+* Token treated as application data, not infrastructure config
 
----
+### Current State
 
-## 11. Phase 7 – CI/CD & Terraform State Management
+* Token stored in plain text (for learning clarity)
+* DynamoDB provides AWS-managed encryption at rest
 
-**Primary Goal:**
-Introduce **safe, repeatable delivery pipelines** with proper infrastructure state management.
+### Planned Improvement
 
----
-
-### CI/CD Principles
-
-* Infrastructure and application pipelines are separated
-* Terraform state is **never stored locally**
-* State locking prevents concurrent modifications
-* Pipelines are environment-aware (even if only `prod` initially)
+* Application-level encryption (KMS)
+* Optional Lambda token vault broker
 
 ---
 
-### Terraform State Strategy
+## Phase 6 — Frontend Application (UI)
 
-Terraform state is managed using:
+### Overview
 
-* **S3 bucket** for remote state storage
-* **DynamoDB table** for state locking
+The frontend is a **React Single Page Application** hosted on EKS and served via Nginx.
 
-Benefits:
+It is responsible for:
 
-* Safe concurrent executions
-* Recoverable state
-* Pipeline-friendly
-* Production-grade pattern
+* User login
+* Token registration
+* Account discovery
+* Account detail visualization
 
----
+The frontend **never** sees:
 
-### CI/CD Responsibilities
+* DynamoDB records
+* Up Bank tokens
+* Backend credentials
 
-* Terraform:
+### Key UI Screens
 
-  * `init` against S3 backend
-  * `plan` on pull request
-  * `apply` on controlled approval
-* Kubernetes:
+#### User Profile
 
-  * image build & push
-  * manifest or Helm deployment
-* Observability:
+Displays authenticated user details and token registration status.
 
-  * dashboards and alerts treated as code
+![User Profile](docs/images/ui-user-profile.png)
 
 ---
 
-## 12. Phase 8 – DNS, TLS & Production Hardening
+#### Dashboard
 
-* Route 53
-* ACM certificates
-* HTTPS for frontend and Grafana
-* Optional WAF
-* Auth-protected observability endpoints
+High-level overview of connected accounts.
+
+![Dashboard](docs/images/ui-dashboard.png)
 
 ---
 
-## 13. Domains Explored in This Lab
+#### Account Details
 
-* AWS Infrastructure & Networking
+Detailed view of an individual Up Bank account.
+
+![Account Details](docs/images/ui-account-details.png)
+
+---
+
+### Runtime Configuration
+
+* Environment config loaded from `runtime-config.json`
+* Build metadata (commit hash + build time) baked into the image
+* Allows the same image to be promoted across environments
+
+---
+
+## Phase 7 — CI/CD & State Management
+
+### Terraform
+
+* Remote state stored in S3
+* DynamoDB used for state locking
+* Works both locally and via automation
+
+### Kubernetes
+
+* Base manifests applied via bootstrap workflow
+* Normal releases are image rollouts only
+* Deployment annotated with:
+
+  * commit hash
+  * build datetime
+
+---
+
+## 6. Domains Explored in This Lab
+
+* AWS networking & managed services
 * Kubernetes (EKS) operations
-* IAM & security boundaries
-* Authentication & identity
-* API architecture (GraphQL, BFF)
-* Secrets management
-* **Monitoring & observability**
-* CI/CD and state management
-* Failure analysis and debugging
+* Identity & authentication (Cognito)
+* GraphQL API design (AppSync)
+* Secure token handling
+* Observability & debugging
+* CI/CD patterns
+* Cost & scalability trade-offs
 * Platform engineering thinking
 
 ---
 
-## 14. High-Level Folder Structure
+## 7. Future Improvements & Architecture Evolution
 
-This is the **recommended structure** for the repository:
-
-```
-upbank-aws-lab/
-├── README.md
-├── docs/
-│   ├── architecture/
-│   ├── decisions/              # ADRs (optional)
-│   └── runbooks/
-│
-├── infra/
-│   ├── terraform/
-│   │   ├── modules/
-│   │   │   ├── vpc/
-│   │   │   ├── eks/
-│   │   │   ├── iam/
-│   │   │   ├── appsync/
-│   │   │   ├── cognito/
-│   │   │   └── monitoring/
-│   │   └── prod/
-│   │       ├── main.tf
-│   │       ├── variables.tf
-│   │       ├── outputs.tf
-│   │       ├── backend.tf       # S3 + DynamoDB backend
-│   │       └── providers.tf
-│   │
-│   └── k8s/
-│       ├── base/
-│       │   ├── nginx/
-│       │   └── monitoring/
-│       └── overlays/
-│
-├── services/
-│   └── token-vault/
-│       └── lambda/
-│
-├── app/
-│   └── frontend/
-│       └── react/
-│
-└── ci/
-    ├── terraform/
-    └── kubernetes/
-```
+This lab was intentionally designed to evolve without requiring architectural rewrites.
+The following improvements represent **natural next steps** aligned with real production systems.
 
 ---
 
-## 15. Why This Lab Exists
+### 7.1 Token Vault Broker (Lambda-based)
+
+**Current state**
+
+* AppSync retrieves the Up Bank token directly from DynamoDB
+* Token stored in plain text (with AWS-managed encryption at rest)
+
+**Planned improvement**
+
+* Introduce a **Token Vault Lambda** acting as a broker:
+
+  * AppSync no longer accesses DynamoDB directly
+  * All external API calls flow through the broker
+  * Token retrieval, decryption, and downstream calls are centralized
+
+**Benefits**
+
+* Stronger security boundary
+* Centralized token lifecycle management
+* Easier rotation, auditing, and revocation
+* Reduced blast radius if a resolver is misconfigured
+
+---
+
+### 7.2 Application-Level Encryption (KMS)
+
+**Current state**
+
+* DynamoDB provides encryption at rest (AWS-managed keys)
+
+**Planned improvement**
+
+* Encrypt tokens **before persistence** using AWS KMS
+* Decrypt only at runtime inside the token broker
+
+**Benefits**
+
+* Defense in depth
+* Token unreadable even to DynamoDB operators
+* Strong compliance posture (PCI / banking-style controls)
+
+---
+
+### 7.3 GitOps for Kubernetes (Option B)
+
+**Current state**
+
+* Kubernetes base resources applied via bootstrap workflow
+* App deployments performed via rollouts
+
+**Planned improvement**
+
+* Introduce **Argo CD or Flux**
+* Kubernetes manifests become the source of truth
+* Cluster continuously reconciles desired state
+
+**Benefits**
+
+* Drift detection and correction
+* Declarative cluster state
+* Cleaner separation between infra and app delivery
+
+---
+
+### 7.4 Multi-Environment Promotion
+
+**Current state**
+
+* Single environment focus (dev-style)
+
+**Planned improvement**
+
+* Multiple environments (dev / staging / prod)
+* Separate AppSync APIs and Cognito User Pools
+* Environment-specific runtime configuration via ConfigMaps
+
+**Benefits**
+
+* Safer promotion paths
+* Realistic enterprise deployment model
+* Reduced coupling between environments
+
+---
+
+### 7.5 Observability & Tracing
+
+**Planned additions**
+
+* AppSync field-level metrics
+* Structured error logging
+* Correlation IDs across:
+
+  * Frontend
+  * AppSync
+  * Token broker (future)
+
+**Benefits**
+
+* Faster root cause analysis
+* Clear ownership boundaries
+* Production-grade diagnostics
+
+---
+
+### 7.6 Rate Limiting & Resilience
+
+**Planned improvements**
+
+* AppSync resolver throttling
+* Retry and backoff strategies for Up Bank API
+* Circuit breaker patterns (broker-based)
+
+**Benefits**
+
+* Protects external dependencies
+* Prevents cascading failures
+* Improves customer experience during outages
+
+---
+
+## 9. Final Note
+
+## 7. Why This Lab Exists
 
 This project is **not a tutorial** and **not a happy-path demo**.
 
 It exists to:
 
 * Surface real failure modes
-* Practice diagnosing platform issues
-* Build intuition around AWS and Kubernetes
-* Develop architectural judgment
+* Practice diagnosing distributed systems
+* Build architectural judgment
+* Understand AWS service boundaries
 
 The outcome is not just a working system —
 it is **operational understanding**.
 
+This lab is intentionally structured to reflect **how real systems are built, reviewed, and evolved**:
+
+* Managed services over custom code
+* Clear trust boundaries
+* Incremental hardening
+* Cost-aware decisions
+* Operational realism
+
+Each phase builds on the previous one without invalidating earlier work — mirroring real production constraints.
+
 ---
-
-If you want next, we can:
-
-* lock in **Phase 2 (Prometheus/Grafana) implementation steps**
-* generate **architecture diagrams** aligned with this document
-* or turn this into a **portfolio-ready case study**
-
-
-
-
-
-
-# upbank-aws-lab
-Hands-on lab to explore some key AWS concepts
 
 ```bash
 aws eks update-kubeconfig \
@@ -423,7 +465,3 @@ aws eks update-kubeconfig \
   --name upbank-lab-prod \
   --alias upbank-prod
 ```
-
-
-# TODO
-- After cluster initialized, it needs to add the current user into the cluster policy
