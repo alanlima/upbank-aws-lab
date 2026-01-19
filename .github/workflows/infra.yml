@@ -4,13 +4,13 @@ on:
     branches:
       - main
     paths:
-      - 'infra/terraform/prod**'
+      - 'infra/terraform**'
   push:
     branches:
       - '**'
       - '!main'
     paths:
-      - 'infra/terraform/prod**'
+      - 'infra/terraform**'
   workflow_dispatch: {}
 
 permissions:
