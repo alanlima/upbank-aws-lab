@@ -1,0 +1,69 @@
+name: infra
+on:
+  push:
+    paths:
+      - 'infra/terraform/prod**'
+  workflow_dispatch: {}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          # role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+      
+      - name: Create terraform.tfvars file
+        shell: bash
+        run: |
+          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
+          app_name = "upbank-lab"
+          environment = "prod"
+          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          EOF
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.2
+
+      - name: Fix Terraform permissions
+        run: |
+          if [ -n "$TERRAFORM_CLI_PATH" ]; then
+            chmod +x "$TERRAFORM_CLI_PATH/terraform" || true
+          fi
+          which terraform
+          terraform version
+
+      - name: Terraform Init
+        working-directory: ./infra/terraform/prod
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: ./infra/terraform/prod
+        run: terraform validate
+        
+      - name: Terraform Plan
+        working-directory: ./infra/terraform/prod
+        run: terraform plan -out tfplan -var-file=terraform.tfvars
+
+      - name: Terraform Apply
+        working-directory: ./infra/terraform/prod
+        run: terraform apply tfplan -auto-approve -var-file=terraform.tfvars
+    
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-prod-plan
+          path: ./infra/terraform/prod/tfplan
+          retention-days: 5
