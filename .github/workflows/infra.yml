@@ -21,7 +21,7 @@ jobs:
   plan:
     name: Run Terraform Plan
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout repository
@@ -121,22 +121,15 @@ jobs:
         working-directory: ./infra/terraform/prod
         run: terraform init
 
-      - name: Download Terraform Plan Artifact
-        uses: actions/download-artifact@v6.0.0
-        with:
-          name: terraform-prod-plan
-          path: ./infra/terraform/prod
-
-      - name: Verify Plan Artifact
-        working-directory: ./infra/terraform/prod
+      - name: Create terraform.tfvars file
+        shell: bash
         run: |
-          if [ ! -f tfplan ]; then
-            echo "❌ Error: tfplan artifact not found!"
-            exit 1
-          fi
-          echo "✅ tfplan artifact downloaded successfully"
-          ls -lah tfplan
+          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
+          app_name = "upbank-lab"
+          environment = "prod"
+          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          EOF
 
       - name: Terraform Apply
         working-directory: ./infra/terraform/prod
-        run: terraform apply tfplan
+        run: terraform apply -auto-approve -var-file=terraform.tfvars
