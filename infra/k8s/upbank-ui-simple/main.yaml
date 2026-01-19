@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: upbank-ui-simple
+  name: upbank-ui
   namespace: frontend
   labels:
     project: upbank-lab
-    app: upbank-ui-simple
+    app: upbank-ui
     environment: prod
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: upbank-ui-simple
+      app: upbank-ui
   template:
     metadata:
       labels:
         project: upbank-lab
-        app: upbank-ui-simple
+        app: upbank-ui
         environment: prod
     spec:
       containers:
         - name: app
-          image: alanrlima/awslab-upbank-ui-simple:v3
+          image: alanrlima/awslab-upbank-ui:v1
           resources:
             limits:
               memory: "256Mi"
@@ -38,4 +38,4 @@ spec:
       volumes:
         - name: runtime-config
           configMap:
-            name: upbank-ui-simple-runtime-config
+            name: upbank-ui-runtime-config

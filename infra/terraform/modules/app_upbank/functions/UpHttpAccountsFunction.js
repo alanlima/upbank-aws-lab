@@ -19,7 +19,7 @@ export function request(ctx) {
 }
 
 export function response(ctx) {
-  // // AppSync HTTP DS puts status + body in result
+  // AppSync HTTP DS puts status + body in result
   const { statusCode, body } = ctx.result || {};
 
   if(statusCode === 401 || statusCode === 403) {

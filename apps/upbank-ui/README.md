@@ -323,3 +323,7 @@ I can give you:
 * Dockerfile for Vite build + Nginx
 * k8s manifests
 * recommended ALB path routing
+
+```bash
+docker build -t upbank-ui . --build-arg COMMIT_SHA=$(git rev-parse --short HEAD) --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+```

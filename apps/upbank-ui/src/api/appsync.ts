@@ -28,6 +28,36 @@ export const ME = /* GraphQL */ `
   }
 `
 
+export const LIST_ACCOUNTS = /* GraphQL */ `
+  query Accounts {
+    accounts {
+      id
+      displayName
+      accountType
+      ownershipType
+      balanceValue
+      balanceValueInBaseUnits
+      currencyCode
+      createdAt
+    }
+  }
+`
+
+export const ACCOUNT_BY_ID = /* GraphQL */ `
+  query Account($id: ID!) {
+    account(id: $id) {
+      id
+      displayName
+      accountType
+      ownershipType
+      balanceValue
+      balanceValueInBaseUnits
+      currencyCode
+      createdAt
+    }
+  }
+`
+
 type AppSyncResponse<T> = {
   data?: T
   errors?: Array<{ message: string }>
@@ -90,6 +120,17 @@ export const fetchMe = async () => {
   return data.me ?? null
 }
 
+export type UpAccount = {
+  id: string
+  displayName: string | null
+  accountType: string | null
+  ownershipType: string | null
+  balanceValue: string | null
+  balanceValueInBaseUnits: number | null
+  currencyCode: string | null
+  createdAt: string | null
+}
+
 export const STATUS_AND_ME = /* GraphQL */ `
   query StatusAndMe {
     getTokenRegistered {
@@ -111,4 +152,14 @@ export const fetchStatusAndMe = async () => {
     registered: normalizeRegistered(data.getTokenRegistered),
     me: data.me ?? null,
   }
+}
+
+export const fetchAccounts = async () => {
+  const data = await callAppSync<{ accounts: UpAccount[] }>(LIST_ACCOUNTS)
+  return data.accounts || []
+}
+
+export const fetchAccountById = async (id: string) => {
+  const data = await callAppSync<{ account: UpAccount | null }>(ACCOUNT_BY_ID, { id })
+  return data.account ?? null
 }

@@ -5,6 +5,7 @@ resource "aws_appsync_datasource" "dynamodb" {
     api_id = aws_appsync_graphql_api.this.id
     name   = "TokenRegistryTable"
     type   = "AMAZON_DYNAMODB"
+    description = "DynamoDB table for token registry"
     service_role_arn = aws_iam_role.appsync_role.arn
 
     dynamodb_config {
@@ -17,9 +18,8 @@ resource "aws_appsync_datasource" "up_http" {
   api_id = aws_appsync_graphql_api.this.id
   name = "UpBankApi"
   type = "HTTP"
-
+  description = "Up Bank API HTTP Data Source"
   http_config {
-    # endpoint = "https://api.up.com.au/api/v1"
     endpoint = "https://api.up.com.au"
   }
 }
@@ -148,6 +148,7 @@ resource "aws_appsync_function" "up_http_accounts" {
   api_id = aws_appsync_graphql_api.this.id
   name = "UpHttpAccountsFunction"
   data_source = aws_appsync_datasource.up_http.name
+  description = "Pipeline function to fetch all accounts from Up Bank API using HTTP data source"
 
   runtime {
     name = "APPSYNC_JS"
@@ -163,7 +164,7 @@ resource "aws_appsync_function" "up_http_account_by_id" {
   api_id = aws_appsync_graphql_api.this.id
   name = "UpHttpAccountByIdFunction"
   data_source = aws_appsync_datasource.up_http.name
-
+  description = "Pipeline function to fetch a specific account by ID from Up Bank API using HTTP data source"
   runtime {
     name = "APPSYNC_JS"
     runtime_version = "1.0.0"
@@ -178,7 +179,7 @@ resource "aws_appsync_function" "get_token_from_ddb" {
   api_id = aws_appsync_graphql_api.this.id
   name = "GetTokenFromDynamoDbFunction"
   data_source = aws_appsync_datasource.dynamodb.name
-
+  description = "Pipeline function to retrieve Up Bank API token from DynamoDB token registry table"
   runtime {
     name = "APPSYNC_JS"
     runtime_version = "1.0.0"

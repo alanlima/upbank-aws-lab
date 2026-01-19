@@ -47,9 +47,9 @@ const AppHome = () => {
     <div className="card">
       <header>
         <div>
-          <span className="badge">Dashboard</span>
-          <h1>Welcome back</h1>
-          <p>Your authentication is active. Manage your UpBank integration here.</p>
+          <span className="badge">Profile</span>
+          <h1>Your profile</h1>
+          <p>Identity and session details for your UpBank integration.</p>
         </div>
         {registered !== null && (
           <div className={`status-pill ${registered ? 'ok' : 'warn'}`}>
@@ -92,6 +92,9 @@ const AppHome = () => {
         )}
 
         <div className="actions">
+          <button className="button primary" onClick={() => navigate('/app')}>
+            Back to accounts
+          </button>
           <button className="button secondary" onClick={handleLogout}>
             Logout
           </button>

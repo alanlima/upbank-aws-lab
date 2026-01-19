@@ -185,6 +185,133 @@ It does **not** see Up token ever.
    * token missing → “Token not registered”
    * invalid token → Up API returns 401, AppSync surfaces error
 
+
+# Key Issues Encountered & Learnings (Final Notes)
+
+These are **important AWS-specific constraints** that are easy to miss and absolutely worth documenting.
+
+---
+
+## Issue 01 — `encodeURIComponent` not supported in AppSync JS runtime
+
+### Problem
+
+While implementing the HTTP function for:
+
+```js
+/accounts/{id}
+```
+
+the initial implementation used:
+
+```js
+encodeURIComponent(id)
+```
+
+This failed at runtime.
+
+### Root cause
+
+* AppSync **JS runtime is not Node.js**
+* It does **not** support Node or browser globals
+* Standard JavaScript APIs are limited to what AppSync provides
+
+### Resolution
+
+Use the AppSync utility equivalent:
+
+```js
+util.urlEncode(id)
+```
+
+### Learning
+
+* AppSync JS resolvers run in a **sandboxed runtime**
+* You must use utilities provided by:
+
+  ```js
+  import { util } from "@aws-appsync/utils";
+  ```
+* Any Node.js or browser-specific global APIs should be assumed **unsupported**
+
+---
+
+## Issue 02 — HTTP data source endpoint cannot include path segments
+
+### Problem
+
+The HTTP datasource was initially defined as:
+
+```
+https://api.up.com.au/api/v1
+```
+
+Terraform/AppSync rejected this configuration.
+
+### Root cause
+
+* **AppSync HTTP data sources only accept a base domain**
+* Path segments are **not allowed** in the endpoint definition
+* Paths must be supplied dynamically in the resolver via `resourcePath`
+
+### Resolution
+
+Datasource endpoint was changed to:
+
+```
+https://api.up.com.au
+```
+
+And resolvers now specify:
+
+```js
+resourcePath: "/api/v1/accounts"
+```
+
+or
+
+```js
+resourcePath: `/api/v1/accounts/${util.urlEncode(id)}`
+```
+
+### Learning
+
+* AppSync HTTP data source design enforces **strict separation**:
+
+  * Base URL → datasource
+  * Path/query → resolver logic
+* This pattern enables reuse of the same datasource across multiple endpoints
+
+---
+
+## Architectural Learnings (Consolidated)
+
+* AppSync is **not generic GraphQL** — it has strong, opinionated execution rules
+* DynamoDB is a **valid long-term choice** for sensitive tokens when combined with:
+
+  * IAM
+  * controlled access patterns
+  * encryption (added later)
+* Cost and scalability considerations matter even in labs
+* SPA auth failures often originate from routing or hosting, not identity
+* Runtime frontend config is essential when deploying SPAs to Kubernetes
+* Managed services reduce operational burden but require understanding **service-specific constraints**
+
+---
+
+## Final Outcome
+
+At completion:
+
+* ✅ Authentication is fully managed
+* ✅ Tokens never leave the server side
+* ✅ AppSync orchestrates identity, persistence, and external API calls
+* ✅ DynamoDB is the authoritative token store
+* ✅ Frontend is environment-agnostic and EKS-friendly
+* ✅ Infrastructure is modular, reproducible, and extensible
+
+This lab now represents a **realistic, interview-ready, production-aligned architecture**, not a toy example.
+
 ---
 
 # Future Improvement (Phase 4+ / Phase 5): Token Vault Lambda Broker Pattern

@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: upbank-ui-simple-svc
+  name: upbank-ui-svc
   namespace: frontend
   labels:
     project: upbank-lab
-    app: upbank-ui-simple
+    app: upbank-ui
     environment: prod
 spec:
   selector:
-    app: upbank-ui-simple
+    app: upbank-ui
   ports:
   - port: 80
     targetPort: 80
@@ -18,11 +18,11 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: upbank-ui-simple-ingress
+  name: upbank-ui-ingress
   namespace: frontend
   labels:
     project: upbank-lab
-    app: upbank-ui-simple
+    app: upbank-ui
     environment: prod
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -30,6 +30,7 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-2:097922957316:certificate/84f21c6e-f30c-4520-b530-0cde65ae1410"
     alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-name: upbank-ui-alb
 spec:
   ingressClassName: alb
   rules:
@@ -39,6 +40,6 @@ spec:
            pathType: Prefix
            backend:
              service:
-               name: upbank-ui-simple-svc
+               name: upbank-ui-svc
                port:
                  number: 80
