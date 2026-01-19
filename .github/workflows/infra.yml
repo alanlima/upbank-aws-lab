@@ -62,7 +62,7 @@ jobs:
         run: terraform apply tfplan -auto-approve -var-file=terraform.tfvars
     
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: terraform-prod-plan
           path: ./infra/terraform/prod/tfplan
