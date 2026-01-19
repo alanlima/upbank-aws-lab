@@ -4,6 +4,7 @@ locals {
     Application        = var.app_name
     ManagedBy          = "terraform"
     DataClassification = "sensitive"
+    Owner              = var.owner
   }
 
   cluster_name = "${var.app_name}-${var.environment}"

@@ -45,3 +45,9 @@ variable "aws_profile" {
   type        = string
   default     = ""
 }
+
+variable "owner" {
+  description = "The owner of the infrastructure"
+  type        = string
+  default     = "awslab-team"
+}
