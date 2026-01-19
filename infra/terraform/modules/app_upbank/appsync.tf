@@ -30,7 +30,7 @@ resource "aws_appsync_datasource" "none" {
   name   = "NoneDataSource"
   type   = "NONE"
 
-  description = "Local resolver data source for AppSync - no external calls"
+  description = "Local resolver data source for AppSync"
 }
 
 # --------------------------
