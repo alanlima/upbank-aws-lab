@@ -39,3 +39,9 @@ variable "eks_admin_user_name" {
     type = string
     description = "The IAM user name to be granted admin access to the EKS cluster"
 }
+
+variable "aws_profile" {
+    description = "AWS profile to use (leave empty for CI/CD or default credentials chain)"
+    type        = string
+    default     = ""
+}
