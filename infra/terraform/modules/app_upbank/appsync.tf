@@ -18,7 +18,7 @@ resource "aws_appsync_datasource" "up_http" {
   api_id      = aws_appsync_graphql_api.this.id
   name        = "UpBankApi"
   type        = "HTTP"
-  description = "Up Bank API HTTP Data Source - V1"
+  description = "Up Bank API HTTP Data Source"
   http_config {
     endpoint = "https://api.up.com.au"
   }
