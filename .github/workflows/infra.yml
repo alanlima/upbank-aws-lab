@@ -34,15 +34,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2
-      
-      - name: Create terraform.tfvars file
-        shell: bash
-        run: |
-          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
-          app_name = "upbank-lab"
-          environment = "prod"
-          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
-          EOF
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -69,6 +60,14 @@ jobs:
         working-directory: ./infra/terraform/prod
         run: terraform fmt -check -recursive
       
+      - name: Create terraform.tfvars file
+        shell: bash
+        run: |
+          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
+          app_name = "upbank-lab"
+          environment = "prod"
+          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          EOF
       - name: Terraform Plan
         working-directory: ./infra/terraform/prod
         run: terraform plan -out tfplan -var-file=terraform.tfvars
