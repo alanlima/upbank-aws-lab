@@ -98,7 +98,7 @@ resource "aws_appsync_graphql_api" "this" {
   }
   log_config {
     cloudwatch_logs_role_arn = aws_iam_role.appsync_role.arn
-    field_log_level          = "ERROR"
+    field_log_level          = "ALL"
   }
 
   schema = file(local.schema_file)
