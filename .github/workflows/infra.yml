@@ -59,7 +59,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./infra/terraform/prod
-        run: terraform apply tfplan -auto-approve -var-file=terraform.tfvars
+        run: terraform apply tfplan
     
       - name: Upload Artifact
         uses: actions/upload-artifact@v6.0.0
