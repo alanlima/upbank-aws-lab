@@ -1,19 +1,31 @@
-name: infra
+name: infra-plan
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infra/terraform/prod**'
   push:
+    branches:
+      - '**'
+      - '!main'
     paths:
       - 'infra/terraform/prod**'
   workflow_dispatch: {}
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 jobs:
-  terraform:
+  plan-and-comment:
+    name: Run Terraform Plan and Post PR Comment
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.1
@@ -22,15 +34,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2
-      
-      - name: Create terraform.tfvars file
-        shell: bash
-        run: |
-          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
-          app_name = "upbank-lab"
-          environment = "prod"
-          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
-          EOF
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -52,18 +55,33 @@ jobs:
       - name: Terraform Validate
         working-directory: ./infra/terraform/prod
         run: terraform validate
-        
+      
+      - name: Terraform Format Check
+        working-directory: ./infra/terraform/prod
+        run: terraform fmt -check -recursive
+      
+      - name: Create terraform.tfvars file
+        shell: bash
+        run: |
+          cat <<EOF > ./infra/terraform/prod/terraform.tfvars
+          app_name = "upbank-lab"
+          environment = "prod"
+          eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          EOF
       - name: Terraform Plan
         working-directory: ./infra/terraform/prod
         run: terraform plan -out tfplan -var-file=terraform.tfvars
 
-      - name: Terraform Apply
-        working-directory: ./infra/terraform/prod
-        run: terraform apply tfplan -auto-approve -var-file=terraform.tfvars
+      - name: Post Terraform Plan Comment in PR
+        uses: towardsthecloud/terraform-plan-pr-commenter@v1
+        with:
+          planfile: tfplan
+          working-directory: ./infra/terraform/prod
+          aws-region: ap-southeast-2
     
       - name: Upload Artifact
         uses: actions/upload-artifact@v6.0.0
         with:
           name: terraform-prod-plan
           path: ./infra/terraform/prod/tfplan
-          retention-days: 5
+          retention-days: 2

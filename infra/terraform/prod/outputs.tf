@@ -65,20 +65,20 @@ output "kubectl_config_command" {
 
 output "appsync_graphql_url" {
   description = "AWS AppSync GraphQL API endpoint URL"
-  value = module.application.appsync_graphql_url
+  value       = module.application.appsync_graphql_url
 }
 
 output "cognito_domain_url" {
   description = "Cognito domain URL for authentication"
-  value = module.application.cognito_domain_url
+  value       = module.application.cognito_domain_url
 }
 
 output "cognito_app_client_id" {
   description = "Cognito app client ID for authentication"
-  value = module.application.cognito_app_client_id
+  value       = module.application.cognito_app_client_id
 }
 
 output "acm_self_signed_certificate_arn" {
   description = "ARN of the imported ACM self-signed certificate for SSL/TLS"
-  value = aws_acm_certificate.imported.arn
+  value       = aws_acm_certificate.imported.arn
 }

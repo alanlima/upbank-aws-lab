@@ -17,9 +17,9 @@ variable "hosted_zone_id" {
 variable "records" {
   description = "A list of DNS records to create in the hosted zone"
   type = list(object({
-    name    = string
-    type    = string
-    ttl     = number
+    name   = string
+    type   = string
+    ttl    = number
     values = list(string)
     alias = object({
       name                   = string

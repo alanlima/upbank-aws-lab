@@ -1,4 +1,4 @@
-variable "aws_region" { 
+variable "aws_region" {
   description = "The AWS region to deploy resources in"
   type        = string
   default     = "ap-southeast-2"
@@ -11,9 +11,9 @@ variable "environment" {
 }
 
 variable "app_name" {
-    description = "The name of the application"
-    type        = string
-    default     = "upbank-lab"
+  description = "The name of the application"
+  type        = string
+  default     = "upbank-lab"
 }
 
 variable "vpc_cidr" {
@@ -29,19 +29,19 @@ variable "kubernetes_version" {
 }
 
 variable "node_instance_types" {
-    description = "The instance types for the EKS worker nodes"
-    type        = list(string)
-    # default     = ["t3.small"]
-    default     = ["t3.small"]
+  description = "The instance types for the EKS worker nodes"
+  type        = list(string)
+  # default     = ["t3.small"]
+  default = ["t3.small"]
 }
 
 variable "eks_admin_user_name" {
-    type = string
-    description = "The IAM user name to be granted admin access to the EKS cluster"
+  type        = string
+  description = "The IAM user name to be granted admin access to the EKS cluster"
 }
 
 variable "aws_profile" {
-    description = "AWS profile to use (leave empty for CI/CD or default credentials chain)"
-    type        = string
-    default     = ""
+  description = "AWS profile to use (leave empty for CI/CD or default credentials chain)"
+  type        = string
+  default     = ""
 }
