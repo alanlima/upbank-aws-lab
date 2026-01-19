@@ -73,20 +73,11 @@ jobs:
         run: terraform plan -out tfplan -var-file=terraform.tfvars
 
       - name: Post Terraform Plan Comment in PR
-        if: github.event_name == 'pull_request'
         uses: towardsthecloud/terraform-plan-pr-commenter@v1
         with:
           planfile: tfplan
           working-directory: ./infra/terraform/prod
           aws-region: ap-southeast-2
-    
-      - name: Upload Artifact
-        if: success()
-        uses: actions/upload-artifact@v6.0.0
-        with:
-          name: terraform-prod-plan
-          path: ./infra/terraform/prod/tfplan
-          retention-days: 3
 
   apply:
     name: Apply Terraform Changes
