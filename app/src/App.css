@@ -77,6 +77,28 @@ p {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.button.button-compact {
+  padding: 0.65rem 1.2rem;
+  font-size: 0.95rem;
+}
+
+.button.with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.button-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+}
+
+.button-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 .button.primary {
   background: var(--accent);
   color: #fffaf2;
@@ -409,6 +431,16 @@ p {
   grid-template-columns: 1fr auto;
   gap: 1rem;
   align-items: center;
+}
+
+.detail-header {
+  align-items: flex-start;
+}
+
+.detail-actions {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: end;
 }
 
 .placeholder-tiles {

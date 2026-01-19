@@ -106,20 +106,8 @@ const AccountDetails = () => {
                 </strong>
               </div>
               <div>
-                <p className="eyebrow">Base units</p>
-                <span className="mono">
-                  {account.balanceValueInBaseUnits !== null
-                    ? `${account.balanceValueInBaseUnits} ${account.currencyCode ?? ''}`.trim()
-                    : 'Not provided'}
-                </span>
-              </div>
-              <div>
                 <p className="eyebrow">Created</p>
                 <span className="mono">{formatDate(account.createdAt)}</span>
-              </div>
-              <div>
-                <p className="eyebrow">Account ID</p>
-                <span className="mono">{account.id}</span>
               </div>
             </div>
 

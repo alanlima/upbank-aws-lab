@@ -16,6 +16,111 @@ const formatDate = (value: string | null) => {
   return parsed.toLocaleDateString()
 }
 
+const IconEye = ({ crossed = false }: { crossed?: boolean }) => (
+  <svg viewBox="0 0 20 20" role="presentation" aria-hidden="true">
+    <path
+      d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle
+      cx="10"
+      cy="10"
+      r="2.6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {crossed && (
+      <path
+        d="m4 4 12 12"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    )}
+  </svg>
+)
+
+const IconUser = () => (
+  <svg viewBox="0 0 20 20" role="presentation" aria-hidden="true">
+    <circle
+      cx="10"
+      cy="6.5"
+      r="3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M4 16c0-2.4 2.7-4.2 6-4.2s6 1.8 6 4.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconLogout = () => (
+  <svg viewBox="0 0 20 20" role="presentation" aria-hidden="true">
+    <path
+      d="M11 4.5H6.5A1.5 1.5 0 0 0 5 6v8a1.5 1.5 0 0 0 1.5 1.5H11"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="m12.5 7 3 3-3 3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M15.5 10H9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const IconArrowRight = () => (
+  <svg viewBox="0 0 20 20" role="presentation" aria-hidden="true">
+    <path
+      d="m9 5 5 5-5 5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M6 10h8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 const Accounts = () => {
   const navigate = useNavigate()
   const [accounts, setAccounts] = useState<UpAccount[]>([])
@@ -93,17 +198,26 @@ const Accounts = () => {
         </div>
         <div className="actions-gap" />
         <button
-          className="button secondary"
+          className="button secondary button-compact with-icon"
           type="button"
           onClick={() => setShowBalances((prev) => !prev)}
           aria-pressed={showBalances}
         >
+          <span className="button-icon" aria-hidden="true">
+            <IconEye crossed={showBalances} />
+          </span>
           {showBalances ? 'Hide balances' : 'Show balances'}
         </button>
-        <button className="button secondary" onClick={() => navigate('/app/profile')}>
+        <button className="button secondary button-compact with-icon" onClick={() => navigate('/app/profile')}>
+          <span className="button-icon" aria-hidden="true">
+            <IconUser />
+          </span>
           Profile
         </button>
-        <button className="button secondary" onClick={handleLogout}>
+        <button className="button secondary button-compact with-icon" onClick={handleLogout}>
+          <span className="button-icon" aria-hidden="true">
+            <IconLogout />
+          </span>
           Logout
         </button>
       </div>
@@ -179,12 +293,25 @@ const Accounts = () => {
               <div className="panel detail-peek">
                 {selected ? (
                   <>
-                    <div className="panel-header">
+                    <div className="panel-header detail-header">
                       <div>
                         <p className="eyebrow">{selected.accountType ?? 'Account'}</p>
                         <h2>{selected.displayName ?? 'Untitled account'}</h2>
                       </div>
-                      <span className="account-chip">{selected.ownershipType ?? 'Unknown'}</span>
+                      <div className="detail-actions">
+                        <button
+                          className="button secondary with-icon"
+                          onClick={() =>
+                            navigate(`/app/accounts/${encodeURIComponent(selected.id)}`)
+                          }
+                        >
+                          <span className="button-icon" aria-hidden="true">
+                            <IconArrowRight />
+                          </span>
+                          View full details
+                        </button>
+                        <span className="account-chip">{selected.ownershipType ?? 'Unknown'}</span>
+                      </div>
                     </div>
                     <div className="detail-grid">
                       <div>
@@ -213,16 +340,6 @@ const Accounts = () => {
                         <div className="placeholder-tile" />
                         <div className="placeholder-tile" />
                       </div>
-                    </div>
-                    <div className="account-card__footer" style={{ justifyContent: 'flex-start' }}>
-                      <button
-                        className="button primary"
-                        onClick={() =>
-                          navigate(`/app/accounts/${encodeURIComponent(selected.id)}`)
-                        }
-                      >
-                        View full details
-                      </button>
                     </div>
                   </>
                 ) : (
