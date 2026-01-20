@@ -7,5 +7,10 @@
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
       "minikube": "none"
     }
+  },
+  "remoteEnv": {
+    "AWS_DEFAULT_REGION": "ap-southeast-2",
+    "AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
+    "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}"
   }
 }
