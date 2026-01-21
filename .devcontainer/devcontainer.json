@@ -6,7 +6,8 @@
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
       "minikube": "none"
-    }
+    },
+    "ghcr.io/devcontainers/features/terraform:1": {}
   },
   "remoteEnv": {
     "AWS_DEFAULT_REGION": "ap-southeast-2",
