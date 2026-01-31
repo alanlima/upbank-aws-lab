@@ -9,7 +9,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.8rem;
-  background: linear-gradient(135deg, rgba(255, 252, 245, 0.9), rgba(236, 248, 246, 0.9));
+  background: linear-gradient(135deg, var(--hero-grad-start), var(--hero-grad-end));
   border: 1px solid var(--border);
   border-radius: 26px;
   padding: 2.4rem;
@@ -49,7 +49,7 @@
 .hero-meta span {
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid rgba(27, 127, 122, 0.25);
+  border: 1px solid rgba(var(--accent-rgb), 0.25);
   background: rgba(255, 255, 255, 0.7);
 }
 
@@ -57,7 +57,7 @@
   background: #ffffff;
   border-radius: 20px;
   padding: 1.7rem;
-  border: 1px solid rgba(27, 127, 122, 0.2);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
   display: grid;
   gap: 1rem;
 }
@@ -76,7 +76,7 @@
   padding: 0.6rem 0.8rem;
   border-radius: 14px;
   background: #f7fbfa;
-  border: 1px solid rgba(27, 127, 122, 0.2);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
   display: grid;
   gap: 0.3rem;
 }
@@ -181,7 +181,7 @@
 .diagram-shell {
   position: relative;
   border-radius: 20px;
-  border: 1px solid rgba(27, 127, 122, 0.2);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
   background: #ffffff;
   overflow: hidden;
   min-height: 920px;
@@ -206,13 +206,13 @@
 }
 
 .diagram-edge {
-  stroke: rgba(27, 127, 122, 0.36);
+  stroke: rgba(var(--accent-rgb), 0.36);
   stroke-width: 2.3;
   transition: opacity 0.2s ease, stroke 0.2s ease;
 }
 
 .diagram-edge.core {
-  stroke: #1b7f7a;
+  stroke: var(--accent);
 }
 
 .diagram-edge.observability {
@@ -277,11 +277,11 @@
 .diagram-node.is-selected {
   transform: translate(-50%, -50%) scale(1.05);
   box-shadow: 0 10px 24px rgba(11, 26, 31, 0.18);
-  border-color: rgba(27, 127, 122, 0.6);
+  border-color: rgba(var(--accent-rgb), 0.6);
 }
 
 .diagram-node:focus-visible {
-  outline: 3px solid rgba(27, 127, 122, 0.4);
+  outline: 3px solid rgba(var(--accent-rgb), 0.4);
   outline-offset: 2px;
 }
 
@@ -381,7 +381,7 @@
 
 .diagram-zone.az {
   border-style: dashed;
-  border-color: rgba(27, 127, 122, 0.35);
+  border-color: rgba(var(--accent-rgb), 0.35);
   background: rgba(255, 255, 255, 0.3);
 }
 
@@ -481,7 +481,7 @@
 
 /* Base/infrastructure - Keep existing teal */
 .diagram-edge.base {
-  stroke: rgba(27, 127, 122, 0.6);
+  stroke: rgba(var(--accent-rgb), 0.6);
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
