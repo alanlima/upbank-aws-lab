@@ -92,7 +92,7 @@ const AppHome = () => {
         )}
 
         <div className="actions">
-          <button className="button primary" onClick={() => navigate('/app')}>
+          <button className="button primary" onClick={() => navigate('/app/accounts')}>
             Back to accounts
           </button>
           <button className="button secondary" onClick={handleLogout}>

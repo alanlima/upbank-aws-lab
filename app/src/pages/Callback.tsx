@@ -61,7 +61,7 @@ const Callback = () => {
         clearStoredVerifier()
 
         const registered = await fetchRegistrationStatus()
-        navigate(registered ? '/app' : '/register-token', { replace: true })
+        navigate(registered ? '/app/accounts' : '/register-token', { replace: true })
       } catch (err) {
         setState({
           status: 'error',
