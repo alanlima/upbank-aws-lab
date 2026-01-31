@@ -327,17 +327,32 @@
   border-radius: 18px;
   border: 1px solid var(--border);
   padding: 1.4rem;
-  display: grid;
-  gap: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .node-details h3 {
   margin: 0.2rem 0 0.4rem;
 }
 
+.node-details p {
+  margin: 0;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .detail-section h4 {
   margin: 0.2rem 0 0.3rem;
   font-size: 0.95rem;
+}
+
+.detail-section p {
+  margin: 0;
 }
 
 .diagram-zone {

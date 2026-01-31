@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import type { PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from 'react'
 import './LandingZonePage.css'
 import { architectureConfig } from '../config/architecture'
-import type { ArchitectureEdge, ArchitectureNode } from '../config/architecture'
+import type { ArchitectureGroup, ArchitectureNode } from '../config/architecture'
 import {
   AwsAlbIcon,
   AwsApiGatewayIcon,
@@ -142,6 +142,9 @@ const LandingZonePage = () => {
           </div>
           <ul className="learning-list">
             <li>
+              <strong>Frontend:</strong> ReactJS SPA patterns and state flow
+            </li>
+            <li>
               <strong>AuthN/AuthZ:</strong> Cognito, JWT, and protected UI flows
             </li>
             <li>
@@ -216,7 +219,7 @@ const LandingZonePage = () => {
             </li>
             <li>
               <strong>Phase 10:</strong> UI improvements - add transactions support and
-              notification configuration shell.
+              notification configuration shell, plus Apollo Client integration for GraphQL.
             </li>
             <li>
               <strong>Phase 11:</strong> Webhooks/Notifications - implement transaction
@@ -358,8 +361,6 @@ const ArchitectureExplorer = () => {
     event.currentTarget.releasePointerCapture(event.pointerId)
   }
 
-  const isHighlighted = () => true
-
   const getEdgePoints = (from: ArchitectureNode, to: ArchitectureNode) => {
     const dx = to.x - from.x
     const dy = to.y - from.y
@@ -457,7 +458,7 @@ const ArchitectureExplorer = () => {
                 })}
             </svg>
             {nodes.map((node) => {
-              const highlighted = isHighlighted(node.group)
+              const highlighted = true; // Future: add filtering/highlighting logic
               const isActive = node.id === selectedNodeId
               const Icon = node.icon ? iconMap[node.icon as keyof typeof iconMap] : null
               return (
