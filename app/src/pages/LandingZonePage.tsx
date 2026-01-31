@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import type { PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent } from 'react'
 import './LandingZonePage.css'
 import { architectureConfig } from '../config/architecture'
-import type { ArchitectureGroup, ArchitectureNode } from '../config/architecture'
+import type { ArchitectureNode } from '../config/architecture'
 import {
   AwsAlbIcon,
   AwsApiGatewayIcon,
