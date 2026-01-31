@@ -66,7 +66,7 @@ resource "helm_release" "aws_load_balancer_controller" {
     }
   ]
 
-  depends_on = [ aws_eks_access_policy_association.admin ]
+  depends_on = [aws_eks_access_policy_association.admin]
 }
 
 # resource "kubernetes_namespace_v1" "frontend" {

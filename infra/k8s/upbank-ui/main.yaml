@@ -14,13 +14,13 @@ metadata:
 data:
   runtime-config.json: |
     {
-      "cognitoDomain" : "https://upbank-prod.auth.ap-southeast-2.amazoncognito.com",
-      "clientId" : "13sk8uejgh9ha4b9gn28ahkt9f",
-      "appSyncUrl" : "https://api.upbank-lab.alanlima.cloud/graphql",
+      "cognitoDomain" : "https://<project>-prod.auth.ap-southeast-2.amazoncognito.com",
+      "clientId" : "<placeholder>",
+      "appSyncUrl" : "https://api.<project>-lab.<domain>/graphql",
       "region" : "ap-southeast-2",
       "scopes" : "openid email profile",
-      "logoutUri" : "https://upbank-lab.alanlima.cloud/logout",
-      "redirectUri" : "https://upbank-lab.alanlima.cloud/callback"
+      "logoutUri" : "https://<project>-lab.<domain>/logout",
+      "redirectUri" : "https://<project>-lab.<domain>/callback"
     }
 ---
 apiVersion: apps/v1

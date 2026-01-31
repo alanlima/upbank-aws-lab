@@ -31,7 +31,7 @@ variable "kubernetes_version" {
 variable "node_instance_types" {
   description = "The instance types for the EKS worker nodes"
   type        = list(string)
-  default = ["t3.medium"]
+  default     = ["t3.medium"]
 }
 
 variable "eks_admin_user_name" {
@@ -52,6 +52,12 @@ variable "owner" {
 }
 
 variable "root_domain" {
-  description = "root access domain to register in route53 done"
-  type = string
+  description = "root access domain to register in route53"
+  type        = string
+}
+
+variable "ui_alb_name" {
+  description = "The name of the UI Application Load Balancer"
+  type        = string
+  default     = "upbank-ui-alb"
 }

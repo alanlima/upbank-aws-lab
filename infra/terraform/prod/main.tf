@@ -77,7 +77,7 @@ module "eks" {
   addons = {
     vpc-cni = {
       # addon_version = "v1.21.1-eksbuild.1" 
-      addon_version = "v1.21.1-eksbuild.3" 
+      addon_version = "v1.21.1-eksbuild.3"
       # Only VPC CNI can be created before nodes are up
       before_compute              = true
       resolve_conflicts_on_create = "OVERWRITE"
@@ -105,44 +105,11 @@ module "eks" {
       max_size       = 3
     }
   }
-}
-
-resource "tls_private_key" "self_signed_ca" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-resource "tls_self_signed_cert" "self_signed" {
-  private_key_pem = tls_private_key.self_signed_ca.private_key_pem
-
-  subject {
-    common_name  = var.app_name
-    organization = "aws lab"
-  }
-
-  validity_period_hours = 24 * 365
-  early_renewal_hours   = 24 * 30
-
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
+  # Ensure EKS is destroyed after application and monitoring modules
+  depends_on = [
+    module.application,
+    module.monitoring
   ]
-
-  dns_names = [
-    var.app_name,
-    "*.${var.app_name}",
-    "localhost"
-  ]
-}
-
-resource "aws_acm_certificate" "imported" {
-  private_key      = tls_private_key.self_signed_ca.private_key_pem
-  certificate_body = tls_self_signed_cert.self_signed.cert_pem
-
-  lifecycle {
-    create_before_destroy = false
-  }
 }
 
 # TODO: the access entry is required to give permission for the cluster, but it needs to do via role (ideally)
@@ -195,7 +162,7 @@ module "monitoring" {
     helm       = helm
   }
 
-  depends_on = [ aws_eks_access_policy_association.admin ]
+  depends_on = [aws_eks_access_policy_association.admin]
 }
 
 # --------------------------
@@ -223,13 +190,17 @@ module "application" {
   tags = local.tags
 }
 
-# TODO: need to include the resources from K8S to be destroyed first
+# NOTE: This null_resource is intended as a workaround to influence destroy order, 
+# ensuring that the application and monitoring modules are destroyed before this resource. 
+# However, it does NOT guarantee that other resources (such as Kubernetes resources created outside these modules) will be destroyed first. 
+# The depends_on only affects this resource's own destroy timing, not the destroy order of other resources. 
+# Consider managing destroy order explicitly on the resources that require it.
 resource "null_resource" "destroy_order" {
   provisioner "local-exec" {
     when    = destroy
     command = "echo 'Application resources will be destroyed first'"
   }
-  
+
   depends_on = [
     module.application,
     module.monitoring

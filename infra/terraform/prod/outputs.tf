@@ -73,24 +73,14 @@ output "cognito_app_client_id" {
   value       = module.application.cognito_app_client_id
 }
 
-output "acm_self_signed_certificate_arn" {
-  description = "ARN of the imported ACM self-signed certificate for SSL/TLS - Used in the AWS Load Balancer / Kubernetes Annotations"
-  value       = aws_acm_certificate.imported.arn
-}
-
 output "root_domain_name_servers" {
-  description = "Route53 root domain name servers"  
-  value = aws_route53_zone.root.name_servers
-}
-
-output "tmp" {
-  description = "AWS AppSync GraphQL API endpoint URL"
-  value       = module.application.appsync_graphql_url_all
+  description = "Route53 root domain name servers"
+  value       = aws_route53_zone.root.name_servers
 }
 
 output "appsync_graphql_url" {
   description = "AWS AppSync GraphQL API endpoint URL"
-  value       = [
+  value = [
     module.application.appsync_graphql_url_all["GRAPHQL"],
     "https://${local.api_fqdn}/graphql"
   ]
@@ -98,13 +88,13 @@ output "appsync_graphql_url" {
 
 output "appsync_realtime_url" {
   description = "AWS AppSync GraphQL API endpoint URL"
-  value       = [
+  value = [
     module.application.appsync_graphql_url_all["REALTIME"],
     "wss://${local.api_fqdn}/graphql/realtime"
   ]
 }
 
 output "ui_certificate_arn" {
-  description = "ARN of the ACM certificate for the UI domain"  
-  value = aws_acm_certificate.ui.arn
+  description = "ARN of the ACM certificate for the UI domain"
+  value       = aws_acm_certificate.ui.arn
 }

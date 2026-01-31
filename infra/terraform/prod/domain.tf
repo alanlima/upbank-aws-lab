@@ -5,8 +5,8 @@ resource "aws_route53_zone" "root" {
 
 
 resource "aws_acm_certificate" "appsync" {
-  provider = aws.use1 # AppSync will use CloudFront which requires certs in us-east-1 
-  domain_name = local.api_fqdn
+  provider          = aws.use1 # AppSync will use CloudFront which requires certs in us-east-1 
+  domain_name       = local.api_fqdn
   validation_method = "DNS"
 }
 
@@ -14,24 +14,24 @@ resource "aws_acm_certificate" "appsync" {
 # UI Custom Domain with Route53 DNS Validation
 ##################################################################
 resource "aws_acm_certificate" "ui" {
-  domain_name = local.ui_fqdn
+  domain_name       = local.ui_fqdn
   validation_method = "DNS"
 }
 
 resource "aws_route53_record" "ui_cert_validation" {
-    for_each = {
-        for dvo in aws_acm_certificate.ui.domain_validation_options : dvo.domain_name => {
-            name   = dvo.resource_record_name
-            type   = dvo.resource_record_type
-            record = dvo.resource_record_value
-        }
+  for_each = {
+    for dvo in aws_acm_certificate.ui.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
     }
+  }
 
-    zone_id = aws_route53_zone.root.zone_id
-    name    = each.value.name
-    type    = each.value.type
-    ttl     = 300
-    records = [each.value.record]
+  zone_id = aws_route53_zone.root.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 300
+  records = [each.value.record]
 }
 
 resource "aws_acm_certificate_validation" "ui" {
@@ -42,17 +42,17 @@ resource "aws_acm_certificate_validation" "ui" {
 # TODO: need to review the LB, as it depends on the k8s cluster being up
 
 data "aws_lb" "ui_alb" {
-  name = "upbank-ui-alb"
+  name = var.ui_alb_name
 }
 
 resource "aws_route53_record" "ui_alias" {
   zone_id = aws_route53_zone.root.zone_id
-  name = local.ui_fqdn
-  type = "A"
+  name    = local.ui_fqdn
+  type    = "A"
 
   alias {
-    name = data.aws_lb.ui_alb.dns_name
-    zone_id = data.aws_lb.ui_alb.zone_id
+    name                   = data.aws_lb.ui_alb.dns_name
+    zone_id                = data.aws_lb.ui_alb.zone_id
     evaluate_target_health = true
   }
 }
@@ -96,9 +96,9 @@ resource "aws_appsync_domain_name_api_association" "assoc" {
 
 resource "aws_route53_record" "api" {
   zone_id = aws_route53_zone.root.zone_id
-  name = local.api_fqdn
-  type = "CNAME"
-  ttl  = 300
+  name    = local.api_fqdn
+  type    = "CNAME"
+  ttl     = 300
   records = [
     aws_appsync_domain_name.appsync.appsync_domain_name
   ]
