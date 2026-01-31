@@ -65,41 +65,43 @@ resource "helm_release" "aws_load_balancer_controller" {
       value = var.aws_region
     }
   ]
+
+  depends_on = [aws_eks_access_policy_association.admin]
 }
 
-resource "kubernetes_namespace_v1" "frontend" {
-  metadata {
-    name = "frontend"
-    labels = {
-      "app.kubernetes.io/managed-by" = "terraform"
-      "app.kubernetes.io/part-of"    = var.app_name
-    }
-  }
-  depends_on = [module.eks]
-}
+# resource "kubernetes_namespace_v1" "frontend" {
+#   metadata {
+#     name = "frontend"
+#     labels = {
+#       "app.kubernetes.io/managed-by" = "terraform"
+#       "app.kubernetes.io/part-of"    = var.app_name
+#     }
+#   }
+#   depends_on = [module.eks]
+# }
 
 // TODO: improve this config map to use DNS route, the ALB address is not static
-resource "kubernetes_config_map_v1" "name" {
-  metadata {
-    name      = "upbank-ui-runtime-config"
-    namespace = kubernetes_namespace_v1.frontend.metadata[0].name
-    labels = {
-      "app.kubernetes.io/managed-by" = "terraform"
-      "app.kubernetes.io/part-of"    = var.app_name
-    }
-  }
+# resource "kubernetes_config_map_v1" "name" {
+#   metadata {
+#     name      = "upbank-ui-runtime-config"
+#     namespace = kubernetes_namespace_v1.frontend.metadata[0].name
+#     labels = {
+#       "app.kubernetes.io/managed-by" = "terraform"
+#       "app.kubernetes.io/part-of"    = var.app_name
+#     }
+#   }
 
-  binary_data = {
-    "runtime-config.json" = base64encode(jsonencode({
-      "cognitoDomain" : module.application.cognito_domain_url,
-      "clientId" : module.application.cognito_app_client_id,
-      "appSyncUrl" : module.application.appsync_graphql_url,
-      "region" : var.aws_region,
-      "scopes" : "openid email profile",
-      "logoutUri" : "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/logout",
-      "redirectUri" : "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/callback"
-    }))
-  }
+#   binary_data = {
+#     "runtime-config.json" = base64encode(jsonencode({
+#       "cognitoDomain" : module.application.cognito_domain_url,
+#       "clientId" : module.application.cognito_app_client_id,
+#       "appSyncUrl" : module.application.appsync_graphql_url,
+#       "region" : var.aws_region,
+#       "scopes" : "openid email profile",
+#       "logoutUri" : "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/logout",
+#       "redirectUri" : "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/callback"
+#     }))
+#   }
 
-  depends_on = [module.eks]
-}
+#   depends_on = [module.eks]
+# }

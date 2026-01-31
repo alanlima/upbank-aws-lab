@@ -67,6 +67,7 @@ jobs:
           app_name = "upbank-lab"
           environment = "prod"
           eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          root_domain = "${{ vars.LAB_ROOT_DOMAIN }}"
           EOF
       - name: Terraform Plan
         working-directory: ./infra/terraform/prod
@@ -119,6 +120,7 @@ jobs:
           app_name = "upbank-lab"
           environment = "prod"
           eks_admin_user_name = "${{ vars.EKS_ADMIN_USER_NAME }}"
+          root_domain = "${{ vars.LAB_ROOT_DOMAIN }}"
           EOF
 
       - name: Terraform Apply

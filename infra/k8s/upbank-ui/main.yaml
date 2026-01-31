@@ -1,3 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend
+  labels:
+    project: upbank-lab
+    environment: prod
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upbank-ui-runtime-config
+  namespace: frontend
+data:
+  runtime-config.json: |
+    {
+      "cognitoDomain" : "https://<project>-prod.auth.ap-southeast-2.amazoncognito.com",
+      "clientId" : "<placeholder>",
+      "appSyncUrl" : "https://api.<project>-lab.<domain>/graphql",
+      "region" : "ap-southeast-2",
+      "scopes" : "openid email profile",
+      "logoutUri" : "https://<project>-lab.<domain>/logout",
+      "redirectUri" : "https://<project>-lab.<domain>/callback"
+    }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9,6 +34,11 @@ metadata:
     environment: prod
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: upbank-ui
@@ -21,7 +51,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: alanrlima/awslab-upbank-ui:v1
+          image: alanrlima/awslab-upbank-ui:777a78f58517bb347a39a45e4d8c1896a0124a9b
           resources:
             limits:
               memory: "256Mi"
