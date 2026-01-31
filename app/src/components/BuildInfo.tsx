@@ -9,6 +9,7 @@ const BuildInfo = () => {
 
   return (
     <div className="build-stamp">
+      <ThemeToggle />
       <div className="build-meta" title="Build metadata">
         <span>Build {commit}</span>
         <span className="dot-separator" aria-hidden="true">
@@ -16,7 +17,6 @@ const BuildInfo = () => {
         </span>
         <span>UTC {formattedDate}</span>
       </div>
-      <ThemeToggle />
     </div>
   )
 }
