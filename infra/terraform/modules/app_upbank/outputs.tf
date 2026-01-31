@@ -13,12 +13,20 @@ output "cognito_domain_url" {
   value       = "https://${aws_cognito_user_pool_domain.this.domain}.auth.${var.aws_region}.amazoncognito.com"
 }
 
-output "appsync_graphql_url" {
-  description = "The GraphQL API endpoint URL for AppSync"
-  value       = aws_appsync_graphql_api.this.uris["GRAPHQL"]
+output "appsync_api_id" {
+  description = "The ID of the AppSync GraphQL API"
+  value = aws_appsync_graphql_api.this.id
 }
 
 output "dynamodb_table_name" {
   description = "The name of the DynamoDB table for token registry"
   value       = aws_dynamodb_table.token_registry.name
+}
+
+output "appsync_graphql_url_all" {
+  description = "The AppSync GraphQL API endpoint URLs"
+  value = {
+    for k, v in aws_appsync_graphql_api.this.uris : 
+    k => v
+  }
 }

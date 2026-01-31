@@ -460,8 +460,8 @@ Each phase builds on the previous one without invalidating earlier work — mirr
 ---
 
 ```bash
-aws eks update-kubeconfig \
-  --region ap-southeast-2 \
-  --name upbank-lab-prod \
+aws eks update-kubeconfig `
+  --region ap-southeast-2 `
+  --name upbank-lab-prod `
   --alias upbank-prod
 ```

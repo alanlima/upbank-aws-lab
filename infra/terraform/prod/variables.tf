@@ -25,14 +25,13 @@ variable "vpc_cidr" {
 variable "kubernetes_version" {
   description = "The Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.34"
+  default     = "1.35" # upgrade to 1.35
 }
 
 variable "node_instance_types" {
   description = "The instance types for the EKS worker nodes"
   type        = list(string)
-  # default     = ["t3.small"]
-  default = ["t3.small"]
+  default = ["t3.medium"]
 }
 
 variable "eks_admin_user_name" {
@@ -50,4 +49,9 @@ variable "owner" {
   description = "The owner of the infrastructure"
   type        = string
   default     = "awslab-team"
+}
+
+variable "root_domain" {
+  description = "root access domain to register in route53 done"
+  type = string
 }

@@ -8,6 +8,9 @@ locals {
   }
 
   cluster_name = "${var.app_name}-${var.environment}"
+
+  api_fqdn = "api.${var.app_name}.${var.root_domain}"
+  ui_fqdn  = "${var.app_name}.${var.root_domain}"
 }
 
 data "aws_availability_zones" "available" {
@@ -63,7 +66,7 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  # INFO: required to allow access to cluster from outside VPC (e.g., via kubectl from local)
+  # INFO: lab purpose - allow access to cluster from outside VPC (e.g., via kubectl from local)
   endpoint_public_access = true
 
   dataplane_wait_duration = "60s"
@@ -73,21 +76,23 @@ module "eks" {
   # Create addons DURING cluster creation, not after
   addons = {
     vpc-cni = {
-      addon_version = "v1.21.1-eksbuild.1"
+      # addon_version = "v1.21.1-eksbuild.1" 
+      addon_version = "v1.21.1-eksbuild.3" 
       # Only VPC CNI can be created before nodes are up
       before_compute              = true
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "OVERWRITE"
     }
     kube-proxy = {
-      addon_version               = "v1.34.1-eksbuild.2"
-      before_compute              = true # TODO: consider this needs to be set as false to be created once the nodes is up
+      addon_version               = "v1.35.0-eksbuild.2"
+      before_compute              = false
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "OVERWRITE"
     }
     coredns = {
-      addon_version               = "v1.12.4-eksbuild.1"
-      before_compute              = true # TODO: consider this needs to be set as false to be created once the nodes is up
+      # addon_version               = "v1.12.4-eksbuild.1"
+      addon_version               = "v1.13.1-eksbuild.1"
+      before_compute              = false
       resolve_conflicts_on_create = "OVERWRITE"
       resolve_conflicts_on_update = "OVERWRITE"
     }
@@ -97,8 +102,7 @@ module "eks" {
     default = {
       instance_types = var.node_instance_types
       min_size       = 1
-      max_size       = 6
-      desired_size   = 2
+      max_size       = 3
     }
   }
 }
@@ -135,6 +139,10 @@ resource "tls_self_signed_cert" "self_signed" {
 resource "aws_acm_certificate" "imported" {
   private_key      = tls_private_key.self_signed_ca.private_key_pem
   certificate_body = tls_self_signed_cert.self_signed.cert_pem
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # TODO: the access entry is required to give permission for the cluster, but it needs to do via role (ideally)
@@ -162,12 +170,12 @@ resource "aws_eks_access_policy_association" "admin" {
 # Wait for IAM permissions to propagate before creating load balancer controller
 resource "time_sleep" "wait_for_iam_propagation" {
   depends_on      = [aws_eks_access_policy_association.admin]
-  create_duration = "30s"
+  create_duration = "45s"
 }
 
-data "aws_eks_cluster" "this" {
-  name = module.eks.cluster_name
-}
+# data "aws_eks_cluster" "this" {
+#   name = module.eks.cluster_name
+# }
 
 data "aws_eks_cluster_auth" "this" {
   name = module.eks.cluster_name
@@ -186,6 +194,8 @@ module "monitoring" {
     kubernetes = kubernetes
     helm       = helm
   }
+
+  depends_on = [ aws_eks_access_policy_association.admin ]
 }
 
 # --------------------------
@@ -202,13 +212,26 @@ module "application" {
 
   callback_urls = [
     "https://localhost:5173/callback",
-    "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/callback"
+    "https://upbank-lab.alanlima.cloud/callback"
   ]
 
   logout_urls = [
     "https://localhost:5173/",
-    "https://upbank-ui-alb-1328495550.ap-southeast-2.elb.amazonaws.com/"
+    "https://upbank-lab.alanlima.cloud/"
   ]
 
   tags = local.tags
+}
+
+# TODO: need to include the resources from K8S to be destroyed first
+resource "null_resource" "destroy_order" {
+  provisioner "local-exec" {
+    when    = destroy
+    command = "echo 'Application resources will be destroyed first'"
+  }
+  
+  depends_on = [
+    module.application,
+    module.monitoring
+  ]
 }
