@@ -11,7 +11,6 @@ on:
 permissions:
     contents: read
     id-token: write
-    # packages: write
 
 jobs:
     docker-build-push:
@@ -45,7 +44,9 @@ jobs:
               with:
                   context: "./app"
                   push: true
-                  tags: ${{ vars.DOCKER_HUB_USERNAME }}/awslab-upbank-ui:${{ env.COMMIT_SHA  }}
+                  tags: >-
+                      ${{ vars.DOCKER_HUB_USERNAME }}/awslab-upbank-ui:${{ env.COMMIT_SHA }},
+                      ${{ vars.DOCKER_HUB_USERNAME }}/awslab-upbank-ui:latest
                   build-args: |
                       COMMIT_SHA=${{ env.COMMIT_SHA }}
                       BUILD_DATE=${{ env.BUILD_DATE }}
