@@ -105,11 +105,6 @@ module "eks" {
       max_size       = 3
     }
   }
-  # Ensure EKS is destroyed after application and monitoring modules
-  depends_on = [
-    module.application,
-    module.monitoring
-  ]
 }
 
 # TODO: the access entry is required to give permission for the cluster, but it needs to do via role (ideally)
@@ -162,7 +157,8 @@ module "monitoring" {
     helm       = helm
   }
 
-  depends_on = [aws_eks_access_policy_association.admin]
+  # Ensure monitoring is created after EKS and destroyed before EKS
+  depends_on = [module.eks]
 }
 
 # --------------------------
