@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v1git chec
 kind: Service
 metadata:
   name: upbank-ui-svc

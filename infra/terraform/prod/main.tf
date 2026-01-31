@@ -9,8 +9,9 @@ locals {
 
   cluster_name = "${var.app_name}-${var.environment}"
 
-  api_fqdn = "api.${var.app_name}.${var.root_domain}"
-  ui_fqdn  = "${var.app_name}.${var.root_domain}"
+  api_fqdn  = "api.${var.app_name}.${var.root_domain}"
+  ui_fqdn   = "${var.app_name}.${var.root_domain}"
+  auth_fqdn = "auth.${var.app_name}.${var.root_domain}"
 }
 
 data "aws_availability_zones" "available" {
@@ -171,7 +172,7 @@ module "application" {
   environment = var.environment
   aws_region  = var.aws_region
 
-  cognito_domain_prefix = "upbank-${var.environment}"
+  # cognito_domain_prefix = "upbank-${var.environment}"
 
   callback_urls = [
     "https://localhost:5173/callback",

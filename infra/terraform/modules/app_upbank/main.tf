@@ -11,6 +11,8 @@ locals {
       Environment = var.environment
     }
   )
+
+  use_cognito_domain_prefix = var.cognito_domain_prefix != "" ? true : false
 }
 
 # --------------------------
@@ -80,6 +82,7 @@ resource "aws_cognito_user_pool_client" "spa" {
 }
 
 resource "aws_cognito_user_pool_domain" "this" {
+  count        = local.use_cognito_domain_prefix ? 1 : 0
   domain       = var.cognito_domain_prefix
   user_pool_id = aws_cognito_user_pool.this.id
 }
