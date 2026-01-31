@@ -6,6 +6,10 @@ resource "aws_route53_zone" "root" {
 ##################################################################
 # Cognito User Pool Custom Domain with Route53 DNS Validation
 ##################################################################
+
+# TODO: move duplicate code into a reusable module (cert creation, cert validation, zone records creation and etc)
+# TODO: move the cognito / ui setup into application module.
+
 resource "aws_acm_certificate" "cognito" {
   provider          = aws.use1 # Cognito hosted UI requires certs in us-east-1 for CloudFront
   domain_name       = local.auth_fqdn
@@ -45,7 +49,7 @@ resource "aws_route53_record" "cognito" {
   type    = "A"
   zone_id = aws_route53_zone.root.zone_id
   alias {
-    name                   = aws_cognito_user_pool_domain.this.cloudfront_distribution_arn
+    name                   = aws_cognito_user_pool_domain.this.cloudfront_distribution
     zone_id                = aws_cognito_user_pool_domain.this.cloudfront_distribution_zone_id
     evaluate_target_health = false
   }

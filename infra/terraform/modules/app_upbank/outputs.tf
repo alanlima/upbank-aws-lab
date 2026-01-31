@@ -10,7 +10,7 @@ output "cognito_app_client_id" {
 
 output "cognito_domain_url" {
   description = "The full URL of the Cognito hosted UI domain"
-  value       = "https://${aws_cognito_user_pool_domain.this.domain}.auth.${var.aws_region}.amazoncognito.com"
+  value       = local.use_cognito_domain_prefix ? "https://${aws_cognito_user_pool_domain.this[0].domain}.auth.${var.aws_region}.amazoncognito.com" : ""
 }
 
 output "appsync_api_id" {

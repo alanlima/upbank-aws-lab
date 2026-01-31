@@ -172,7 +172,7 @@ module "application" {
   environment = var.environment
   aws_region  = var.aws_region
 
-  cognito_domain_prefix = "upbank-${var.environment}"
+  # cognito_domain_prefix = "upbank-${var.environment}"
 
   callback_urls = [
     "https://localhost:5173/callback",

@@ -30,7 +30,7 @@ variable "cognito_app_client_name" {
 variable "cognito_domain_prefix" {
   description = "Prefix for the Cognito User Pool domain"
   type        = string
-  default     = "upbank-auth-domain"
+  default     = ""
 }
 
 variable "callback_urls" {
