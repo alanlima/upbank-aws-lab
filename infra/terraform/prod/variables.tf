@@ -52,7 +52,7 @@ variable "owner" {
 }
 
 variable "root_domain" {
-  description = "Root DNS domain to register in Route53 (e.g., alanlima.cloud). Used for application and API endpoints."
+  description = "Root DNS domain to register in Route53. Used for application and API endpoints."
   type        = string
 }
 
