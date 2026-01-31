@@ -13,14 +13,41 @@
 
   --ink: #0b1a1f;
   --ink-muted: #3c4b52;
+  --ink-secondary: #3c4b52;
+  --eyebrow-ink: #3c4b52;
+  --eyebrow-weight: 400;
+  --chip-ink: #3c4b52;
+  --chip-border: var(--border);
+  --account-list-item-border: var(--border);
+  --count-pill-bg: var(--pill-bg);
+  --count-pill-ink: var(--accent-strong);
+  --count-pill-border: var(--border);
+  --balance-ink: var(--ink);
+  --card-balance-value: var(--ink);
+  --card-balance-currency: var(--ink-muted);
+  --card-date: var(--ink-muted);
+  --badge-muted-text: var(--chip-ink);
+  --badge-muted-bg: transparent;
+  --badge-muted-border: var(--chip-border);
+  --bg-base: #f7f2e8;
+  --bg-surface: #fffaf2;
+  --bg-surface-rgb: 255, 250, 242;
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-secondary);
+  --text-tertiary: var(--ink-muted);
+  --text-muted: var(--ink-muted);
   --surface: #fffaf2;
   --surface-strong: #ffffff;
   --border: #e6dac7;
+  --border-subtle: #e6dac7;
+  --border-strong: #d9cbb8;
   --accent: #1b7f7a;
   --accent-rgb: 27, 127, 122;
   --accent-strong: #145c58;
   --accent-strong-rgb: 20, 92, 88;
   --accent-warm: #f29f63;
+  --accent-muted: #158a85;
+  --accent-subtle: rgba(var(--accent-rgb), 0.15);
   --surface-rgb: 255, 250, 242;
   --surface-strong-rgb: 255, 255, 255;
   --diagram-canvas-bg: #eaf2ff;
@@ -29,22 +56,43 @@
   --diagram-control-border: rgba(var(--accent-rgb), 0.45);
   --diagram-control-shadow: 0 10px 24px rgba(11, 26, 31, 0.16);
   --account-list-item-bg: var(--surface-strong);
+  --account-list-item-hover-shadow: rgba(11, 26, 31, 0.08);
+  --account-list-item-hover-border: rgba(var(--accent-rgb), 0.35);
   --button-secondary-bg: var(--surface);
   --button-secondary-ink: var(--accent-strong);
   --button-secondary-border: rgba(var(--accent-strong-rgb), 0.35);
+  --button-secondary-hover-border: rgba(var(--accent-strong-rgb), 0.6);
+  --button-primary-bg: var(--accent);
+  --button-primary-ink: #fffaf2;
+  --button-primary-hover: var(--accent-strong);
   --diagram-label-ink: #9a0e0c;
   --diagram-zone-label-bg: rgba(var(--surface-strong-rgb), 0.85);
   --diagram-zone-label-border: rgba(11, 26, 31, 0.12);
   --badge-bg: #fff2df;
   --badge-ink: #7a4a22;
+  --badge-border: var(--border);
   --input-bg: #fffdf8;
+  --input-border: var(--border);
+  --input-border-focus: var(--accent);
+  --input-placeholder: #9aa7ad;
   --pill-bg: #eef6f4;
   --status-success-bg: #e2f6f1;
   --status-success-ink: #0c6a5c;
   --status-warn-bg: #ffe8d6;
   --status-warn-ink: #a14a08;
+  --status-error-bg: rgba(239, 68, 68, 0.12);
+  --status-error-ink: #b91c1c;
   --card-grad-start: #ffffff;
   --card-grad-end: #f9f5ec;
+  --card-border: var(--border);
+  --placeholder-tile-bg: repeating-linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb), 0.08),
+    rgba(var(--accent-rgb), 0.08) 12px,
+    rgba(var(--accent-strong-rgb), 0.08) 12px,
+    rgba(var(--accent-strong-rgb), 0.08) 24px
+  );
+  --placeholder-tile-border: var(--border);
   --node-edge-bg: #fff8ef;
   --node-compute-bg: #eef6f4;
   --node-auth-bg: #edf0fb;
@@ -52,6 +100,9 @@
   --node-external-bg: #fff0e4;
   --node-ops-bg: #f7efff;
   --shadow: 0 18px 45px rgba(14, 24, 28, 0.12);
+  --shadow-card: 0 10px 26px rgba(11, 26, 31, 0.06);
+  --shadow-card-hover: 0 16px 32px rgba(11, 26, 31, 0.12);
+  --shadow-button: 0 14px 30px rgba(var(--accent-rgb), 0.25);
   --page-bg-base: #f7f2e8;
   --page-bg-spot-1: #ffe9cc;
   --page-bg-spot-2: #d7f0ed;
@@ -62,14 +113,41 @@
 :root[data-theme='vivid'] {
   --ink: #08142e;
   --ink-muted: #2a3f6b;
+  --ink-secondary: #2a3f6b;
+  --eyebrow-ink: #2a3f6b;
+  --eyebrow-weight: 400;
+  --chip-ink: #2a3f6b;
+  --chip-border: var(--border);
+  --account-list-item-border: var(--border);
+  --count-pill-bg: var(--pill-bg);
+  --count-pill-ink: var(--accent-strong);
+  --count-pill-border: var(--border);
+  --balance-ink: var(--ink);
+  --card-balance-value: var(--ink);
+  --card-balance-currency: var(--ink-muted);
+  --card-date: var(--ink-muted);
+  --badge-muted-text: var(--chip-ink);
+  --badge-muted-bg: transparent;
+  --badge-muted-border: var(--chip-border);
+  --bg-base: #e1ecff;
+  --bg-surface: #eaf2ff;
+  --bg-surface-rgb: 234, 242, 255;
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-secondary);
+  --text-tertiary: var(--ink-muted);
+  --text-muted: var(--ink-muted);
   --surface: #eaf2ff;
   --surface-strong: #ffffff;
   --border: #b7ccff;
+  --border-subtle: #c8d9ff;
+  --border-strong: #8fb0ff;
   --accent: #2f5bff;
   --accent-rgb: 47, 91, 255;
   --accent-strong: #1d3fe6;
   --accent-strong-rgb: 29, 63, 230;
   --accent-warm: #46d2ff;
+  --accent-muted: #2344d7;
+  --accent-subtle: rgba(var(--accent-rgb), 0.15);
   --surface-rgb: 234, 242, 255;
   --surface-strong-rgb: 255, 255, 255;
   --diagram-canvas-bg: #dbe8ff;
@@ -78,19 +156,41 @@
   --diagram-control-border: rgba(var(--accent-rgb), 0.5);
   --diagram-control-shadow: 0 10px 24px rgba(12, 22, 44, 0.2);
   --account-list-item-bg: rgba(255, 255, 255, 0.92);
+  --account-list-item-hover-shadow: rgba(12, 22, 44, 0.14);
+  --account-list-item-hover-border: rgba(var(--accent-rgb), 0.6);
   --button-secondary-bg: var(--surface);
   --button-secondary-ink: var(--accent-strong);
   --button-secondary-border: rgba(var(--accent-strong-rgb), 0.4);
+  --button-secondary-hover-border: rgba(var(--accent-rgb), 0.7);
+  --button-primary-bg: var(--accent);
+  --button-primary-ink: #f7faff;
+  --button-primary-hover: #5d7cff;
   --diagram-label-ink: #000000;
   --diagram-zone-label-bg: rgba(var(--surface-strong-rgb), 0.9);
   --diagram-zone-label-border: rgba(12, 20, 40, 0.12);
   --badge-bg: #dbe7ff;
   --badge-ink: #1d3fe6;
+  --badge-border: var(--border);
   --input-bg: #f4f7ff;
+  --input-border: var(--border);
+  --input-border-focus: var(--accent);
+  --input-placeholder: #7181a8;
   --pill-bg: #d6e6ff;
   --card-grad-start: #f7faff;
   --card-grad-end: #e2ecff;
+  --placeholder-tile-bg: repeating-linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb), 0.12),
+    rgba(var(--accent-rgb), 0.12) 12px,
+    rgba(var(--accent-strong-rgb), 0.12) 12px,
+    rgba(var(--accent-strong-rgb), 0.12) 24px
+  );
+  --placeholder-tile-border: rgba(29, 63, 230, 0.2);
+  --card-border: var(--border);
   --shadow: 0 22px 60px rgba(16, 36, 92, 0.25);
+  --shadow-card: 0 10px 26px rgba(12, 22, 44, 0.12);
+  --shadow-card-hover: 0 16px 32px rgba(12, 22, 44, 0.18);
+  --shadow-button: 0 14px 30px rgba(var(--accent-rgb), 0.25);
   --page-bg-base: #e1ecff;
   --page-bg-spot-1: #9fb9ff;
   --page-bg-spot-2: #7be7ff;
@@ -99,41 +199,108 @@
 }
 
 :root[data-mode='dark'] {
-  --ink: #f2f6ff;
-  --ink-muted: #c6d5f5;
-  --surface: #121c32;
-  --surface-strong: #182443;
-  --surface-rgb: 18, 28, 50;
-  --surface-strong-rgb: 24, 36, 67;
+  --bg-base: #0f1419;
+  --bg-surface: #1a1f2c;
+  --bg-surface-rgb: 26, 31, 44;
+  --surface: #1a1f2c;
+  --surface-strong: #232d3b;
+  --surface-rgb: 26, 31, 44;
+  --surface-strong-rgb: 35, 45, 59;
+
+  --border: #2d3748;
+  --border-subtle: #232d3b;
+  --border-strong: #3d4a5c;
+
+  --ink: #f1f5f9;
+  --text-primary: #f1f5f9;
+  --ink-secondary: #cbd5e1;
+  --text-secondary: #cbd5e1;
+  --ink-muted: #94a3b8;
+  --text-tertiary: #94a3b8;
+  --text-muted: #94a3b8;
+  --eyebrow-ink: #94a3b8;
+  --eyebrow-weight: 600;
+
+  --card-balance-value: #ffffff;
+  --card-balance-currency: #94a3b8;
+  --balance-ink: #ffffff;
+  --card-date: #94a3b8;
+
+  --accent: #2dd4bf;
+  --accent-rgb: 45, 212, 191;
+  --accent-strong: #5eead4;
+  --accent-muted: #14b8a6;
+  --accent-subtle: rgba(45, 212, 191, 0.15);
+
+  --badge-bg: rgba(45, 212, 191, 0.12);
+  --badge-ink: #5eead4;
+  --badge-border: rgba(45, 212, 191, 0.3);
+
+  --badge-muted-text: #b8c4d4;
+  --badge-muted-bg: rgba(61, 74, 92, 0.5);
+  --badge-muted-border: #4b5563;
+
+  --count-pill-bg: rgba(45, 212, 191, 0.15);
+  --count-pill-ink: #2dd4bf;
+  --count-pill-border: rgba(45, 212, 191, 0.25);
+
+  --button-primary-bg: #2dd4bf;
+  --button-primary-ink: #0f1419;
+  --button-primary-hover: #5eead4;
+
+  --button-secondary-bg: rgba(45, 212, 191, 0.08);
+  --button-secondary-ink: #cbd5e1;
+  --button-secondary-border: #3d4a5c;
+  --button-secondary-hover-border: #5eead4;
+
+  --status-success-bg: rgba(45, 212, 191, 0.15);
+  --status-success-ink: #5eead4;
+  --status-warn-bg: rgba(251, 191, 36, 0.15);
+  --status-warn-ink: #fbbf24;
+  --status-error-bg: rgba(239, 68, 68, 0.15);
+  --status-error-ink: #f87171;
+
+  --input-bg: #1a1f2c;
+  --input-border: #3d4a5c;
+  --input-border-focus: #2dd4bf;
+  --input-placeholder: #64748b;
+
+  --card-grad-start: #1a3f5c;
+  --card-grad-end: #152e45;
+  --card-border: #2a5570;
+
+  --account-list-item-bg: linear-gradient(160deg, #1a3f5c 0%, #152e45 100%);
+  --account-list-item-border: #2a5570;
+  --account-list-item-hover-shadow: rgba(26, 63, 92, 0.5);
+  --account-list-item-hover-border: #3a6580;
+
+  --placeholder-tile-bg: #2a3a4d;
+  --placeholder-tile-border: #3d4f63;
+
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 10px 26px rgba(11, 26, 31, 0.15);
+  --shadow-card-hover: 0 16px 32px rgba(26, 63, 92, 0.4);
+  --shadow-button: 0 14px 30px rgba(45, 212, 191, 0.2);
+
+  --page-bg-base: #0f1419;
+  --page-bg-spot-1: #1a1f2c;
+  --page-bg-spot-2: #152e45;
+  --hero-grad-start: rgba(26, 63, 92, 0.85);
+  --hero-grad-end: rgba(21, 46, 69, 0.95);
+
   --diagram-canvas-bg: #e6f0ff;
   --diagram-control-bg: rgba(var(--accent-rgb), 0.22);
-  --diagram-control-ink: #0b1430;
+  --diagram-control-ink: #0f1419;
   --diagram-control-border: rgba(var(--accent-rgb), 0.6);
   --diagram-control-shadow: 0 12px 26px rgba(7, 12, 24, 0.25);
-  --account-list-item-bg: rgba(255, 255, 255, 0.2);
-  --border: #364a74;
-  --shadow: 0 20px 55px rgba(3, 6, 16, 0.55);
-  --page-bg-base: #0a1224;
-  --page-bg-spot-1: #263d6f;
-  --page-bg-spot-2: #1b4a6f;
-  --hero-grad-start: rgba(14, 24, 44, 0.96);
-  --hero-grad-end: rgba(18, 40, 70, 0.96);
-  --button-secondary-bg: rgba(255, 255, 255, 0.08);
-  --button-secondary-ink: #f2f6ff;
-  --button-secondary-border: rgba(255, 255, 255, 0.22);
-  --diagram-label-ink: #000000;
-  --diagram-zone-label-bg: rgba(12, 18, 36, 0.85);
-  --diagram-zone-label-border: rgba(255, 255, 255, 0.18);
-  --badge-bg: rgba(var(--accent-rgb), 0.2);
-  --badge-ink: #e6f0ff;
-  --input-bg: #0f1a30;
-  --pill-bg: rgba(var(--accent-rgb), 0.2);
-  --status-success-bg: rgba(34, 197, 94, 0.22);
-  --status-success-ink: #b6f3cc;
-  --status-warn-bg: rgba(251, 146, 60, 0.24);
-  --status-warn-ink: #ffd4a3;
-  --card-grad-start: #1c2a47;
-  --card-grad-end: #141f36;
+  --diagram-label-ink: #0f1419;
+  --diagram-zone-label-bg: rgba(255, 255, 255, 0.85);
+  --diagram-zone-label-border: rgba(11, 26, 31, 0.12);
+
+  --chip-ink: #94a3b8;
+  --chip-border: #4b5563;
+  --pill-bg: rgba(45, 212, 191, 0.12);
+
   --node-edge-bg: rgba(255, 159, 64, 0.28);
   --node-compute-bg: rgba(45, 212, 191, 0.24);
   --node-auth-bg: rgba(129, 140, 248, 0.26);

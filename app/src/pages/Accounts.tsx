@@ -269,18 +269,27 @@ const Accounts = () => {
                             <div>
                               <strong>{account.displayName ?? 'Untitled account'}</strong>
                               <p className="mono small">
-                                {showBalances && account.balanceValue
-                                  ? `${account.balanceValue} ${account.currencyCode ?? ''}`.trim()
-                                  : showBalances
-                                    ? 'Balance unavailable'
-                                    : 'Hidden'}
+                                {showBalances && account.balanceValue ? (
+                                  <>
+                                    <span className="balance-amount">{account.balanceValue}</span>{' '}
+                                    <span className="balance-currency">
+                                      {account.currencyCode ?? ''}
+                                    </span>
+                                  </>
+                                ) : showBalances ? (
+                                  'Balance unavailable'
+                                ) : (
+                                  'Hidden'
+                                )}
                               </p>
                             </div>
                             <div className="list-meta">
                               <span className="account-chip small">
                                 {account.ownershipType ?? 'Unknown'}
                               </span>
-                              <span className="mono small">{formatDate(account.createdAt)}</span>
+                              <span className="mono small date-value">
+                                {formatDate(account.createdAt)}
+                              </span>
                             </div>
                           </button>
                         )
@@ -317,16 +326,23 @@ const Accounts = () => {
                       <div>
                         <p className="eyebrow">Balance</p>
                         <strong className="balance">
-                          {showBalances && selected.balanceValue
-                            ? `${selected.balanceValue} ${selected.currencyCode ?? ''}`.trim()
-                            : showBalances
-                              ? 'Unavailable'
-                              : 'Hidden'}
+                          {showBalances && selected.balanceValue ? (
+                            <>
+                              <span className="balance-amount">{selected.balanceValue}</span>{' '}
+                              <span className="balance-currency">
+                                {selected.currencyCode ?? ''}
+                              </span>
+                            </>
+                          ) : showBalances ? (
+                            'Unavailable'
+                          ) : (
+                            'Hidden'
+                          )}
                         </strong>
                       </div>
                       <div>
                         <p className="eyebrow">Created</p>
-                        <p className="mono">{formatDate(selected.createdAt)}</p>
+                        <p className="mono date-value">{formatDate(selected.createdAt)}</p>
                       </div>
                     </div>
                     <div className="transactions-placeholder">
