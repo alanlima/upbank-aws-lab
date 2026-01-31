@@ -15,7 +15,7 @@ output "cognito_domain_url" {
 
 output "appsync_api_id" {
   description = "The ID of the AppSync GraphQL API"
-  value = aws_appsync_graphql_api.this.id
+  value       = aws_appsync_graphql_api.this.id
 }
 
 output "dynamodb_table_name" {
@@ -26,7 +26,7 @@ output "dynamodb_table_name" {
 output "appsync_graphql_url_all" {
   description = "The AppSync GraphQL API endpoint URLs"
   value = {
-    for k, v in aws_appsync_graphql_api.this.uris : 
+    for k, v in aws_appsync_graphql_api.this.uris :
     k => v
   }
 }
