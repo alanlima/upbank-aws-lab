@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 32 32"
+     width="32"
+     height="32">
+
+  <!-- background (your cream UI color) -->
+  <rect width="32" height="32" rx="7" fill="#F6EFE6"/>
+
+  <!-- U shape (thicker for small sizes) -->
+  <path d="M9 9 v10 a7 7 0 0 0 14 0 v-10"
+        stroke="#0F766E"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+
+</svg>
