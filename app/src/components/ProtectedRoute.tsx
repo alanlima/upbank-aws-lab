@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const isAuthed = hasValidSession()
 
   if (!isAuthed) {
-    return <Navigate to="/" replace state={{ from: location.pathname }} />
+    return <Navigate to="/home" replace state={{ from: location.pathname }} />
   }
 
   return children

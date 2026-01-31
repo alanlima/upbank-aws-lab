@@ -263,6 +263,24 @@ Detailed view of an individual Up Bank account.
 
 ---
 
+#### Landing Zone (Architecture Explorer)
+
+The Landing Zone page is a portfolio-grade onboarding and architecture walkthrough. It includes:
+
+* A step-by-step PAT onboarding flow
+* A client-side PAT registration widget (mocked, ready to swap with AppSync)
+* An interactive infrastructure diagram with node-level details, filters, and zoom/pan
+
+Core files:
+
+* `app/src/pages/LandingZonePage.tsx`
+* `app/src/config/architecture.ts`
+* `app/src/api/tokenClient.ts`
+
+To extend it, update `architecture.ts` for new nodes/edges or replace the token client with AppSync calls.
+
+---
+
 ### Runtime Configuration
 
 * Environment config loaded from `runtime-config.json`

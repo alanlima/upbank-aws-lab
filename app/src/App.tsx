@@ -4,18 +4,20 @@ import AppHome from './pages/AppHome'
 import Accounts from './pages/Accounts'
 import AccountDetails from './pages/AccountDetails'
 import Callback from './pages/Callback'
-import Landing from './pages/Landing'
+import LandingZonePage from './pages/LandingZonePage'
 import RegisterToken from './pages/RegisterToken'
 import ProtectedRoute from './components/ProtectedRoute'
 import BuildInfo from './components/BuildInfo'
+import Landing from './pages/Landing'
 
 function App() {
   return (
     <BrowserRouter>
       <div className="app-shell">
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<LandingZonePage />} />
           <Route path="/callback" element={<Callback />} />
+          <Route path="/home" element={<Landing />} />
           <Route
             path="/register-token"
             element={
@@ -24,8 +26,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
+           <Route
             path="/app"
+            element={
+              <ProtectedRoute>
+                <AppHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/accounts"
             element={
               <ProtectedRoute>
                 <Accounts />

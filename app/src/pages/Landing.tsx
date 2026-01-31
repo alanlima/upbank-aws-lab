@@ -19,7 +19,7 @@ const Landing = () => {
       setError(null)
       try {
         const registered = await fetchRegistrationStatus()
-        navigate(registered ? '/app' : '/register-token', { replace: true })
+        navigate(registered ? '/app/accounts' : '/register-token', { replace: true })
       } catch (err) {
         setError((err as Error).message || 'Unable to verify registration status.')
       } finally {
