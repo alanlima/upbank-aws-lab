@@ -51,7 +51,22 @@ spec:
     spec:
       containers:
         - name: app
-          image: alanrlima/awslab-upbank-ui:777a78f58517bb347a39a45e4d8c1896a0124a9b
+          image: alanrlima/awslab-upbank-ui:be55147eba133334c16e664796807f5ef8455e13
+          startupProbe:
+            httpGet:
+              path: /
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - test -s /usr/share/nginx/html/config/runtime-config.json
+              periodSeconds: 2
+              timeoutSeconds: 1
+              failureThreshold: 3
           resources:
             limits:
               memory: "256Mi"

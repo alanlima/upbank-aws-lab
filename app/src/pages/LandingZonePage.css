@@ -102,6 +102,13 @@
   padding-left: 1.4rem;
 }
 
+.get-started-actions {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
 .landing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -172,7 +179,7 @@
   border: 1px solid rgba(27, 127, 122, 0.2);
   background: #ffffff;
   overflow: hidden;
-  min-height: 860px;
+  min-height: 920px;
   touch-action: none;
 }
 
@@ -189,13 +196,13 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0.48;
+  opacity: 0.44;
   z-index: 2;
 }
 
 .diagram-edge {
-  stroke: rgba(27, 127, 122, 0.4);
-  stroke-width: 2.5;
+  stroke: rgba(27, 127, 122, 0.36);
+  stroke-width: 2.3;
   transition: opacity 0.2s ease, stroke 0.2s ease;
 }
 
@@ -401,4 +408,117 @@
   .diagram-shell {
     min-height: 620px;
   }
+}
+
+
+/* ───────────────────────────────────────────────────────────────────────────
+   NEW ZONE: AWS Managed Services
+   ─────────────────────────────────────────────────────────────────────────── */
+.diagram-zone.managed {
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgba(255, 153, 0, 0.5); /* AWS Orange */
+  background: rgba(255, 247, 230, 0.4);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   EDGE COLORS BY TRAFFIC TYPE
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* UI flow - Blue (upbank-lab.* → ALB → EKS) */
+.diagram-edge.ui {
+  stroke: #2563eb;
+  stroke-width: 2.5;
+}
+
+/* API flow - Orange (api.upbank-lab.* → AppSync) */
+.diagram-edge.api {
+  stroke: #ea580c;
+  stroke-width: 2.5;
+}
+
+/* Auth flow - Purple (auth.upbank-lab.* → Cognito) */
+.diagram-edge.auth {
+  stroke: #9333ea;
+  stroke-width: 2.5;
+}
+
+/* TLS certificate provisioning - Gray dashed */
+.diagram-edge.tls {
+  stroke: #6b7280;
+  stroke-width: 1.5;
+  stroke-dasharray: 6, 4;
+}
+
+/* Observability - Keep existing purple */
+.diagram-edge.observability {
+  stroke: #7356c1;
+}
+
+/* Base/infrastructure - Keep existing teal */
+.diagram-edge.base {
+  stroke: rgba(27, 127, 122, 0.6);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   EDGE LABELS (if you want to show labels on edges)
+   Add this to LandingZonePage.tsx if you want edge labels
+   ─────────────────────────────────────────────────────────────────────────── */
+.edge-label {
+  font-size: 0.7rem;
+  /* fill: #4b5563; */
+  fill: #9a0e0c;
+  font-weight: 500;
+  pointer-events: none;
+  background: white;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   LEGEND (optional - add to your layout if desired)
+   ─────────────────────────────────────────────────────────────────────────── */
+.diagram-legend {
+  position: absolute;
+  bottom: 4.5rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-size: 0.75rem;
+  z-index: 4;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.diagram-legend h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  margin: 0 0 0.3rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-line {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.legend-line.ui { background: #2563eb; }
+.legend-line.api { background: #ea580c; }
+.legend-line.auth { background: #9333ea; }
+.legend-line.tls { 
+  background: repeating-linear-gradient(
+    90deg,
+    #6b7280 0px,
+    #6b7280 6px,
+    transparent 6px,
+    transparent 10px
+  );
 }

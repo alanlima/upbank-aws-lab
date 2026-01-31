@@ -26,47 +26,58 @@ const LandingZonePage = () => {
           <span className="badge">UpBank Lab</span>
           <h1>UpBank Lab - AWS Architecture Study Case</h1>
           <p className="hero-subtitle">
-            A portfolio-grade lab focused on Cognito + AppSync + DynamoDB token vault,
-            deployed on EKS.
+            A portfolio-grade lab that blends managed AWS services, IaC-first infra, and
+            CI/CD automation for a production-style Up Bank integration.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href="#get-started">
+            <a className="button primary" href="/app">
+              Go to App
+            </a>
+            <a className="button secondary" href="#get-started">
               Get Started
             </a>
             <a className="button secondary" href="#architecture">
               Explore the Architecture
             </a>
-            <a className="button secondary" href="/app">
-              Go to App
-            </a>
           </div>
           <div className="hero-meta">
             <span>Read-only React UI</span>
-            <span>AppSync GraphQL</span>
-            <span>DynamoDB token registry</span>
+            <span>Terraform IaC</span>
+            <span>GitHub Actions CI/CD</span>
             <span>EKS + ALB</span>
+            <span>CloudFront + EC2</span>
+            <span>Grafana + Prometheus</span>
           </div>
         </div>
         <div className="hero-card">
           <p className="eyebrow">Lab Snapshot</p>
           <h2>Secure, observable, and intentionally realistic.</h2>
           <p>
-            This lab is designed to mirror production AWS patterns while staying easy to
-            reason about. You authenticate with Cognito, register a PAT once, and then
-            explore the architecture like a systems reviewer.
+            The lab mirrors production AWS patterns with clear boundaries, zero-click
+            operations using Terraform, and automated releases via GitHub Actions.
+            You authenticate with Cognito, register a PAT once, and then explore the
+            architecture like a systems reviewer.
           </p>
           <div className="hero-highlights">
             <div>
-              <strong>Auth</strong>
-              <span>Cognito + JWT</span>
+              <strong>Infra</strong>
+              <span>EKS, EC2, ALB, CloudFront</span>
             </div>
             <div>
-              <strong>API</strong>
-              <span>AppSync GraphQL</span>
+              <strong>API + Data</strong>
+              <span>AppSync + DynamoDB</span>
             </div>
             <div>
-              <strong>Data</strong>
-              <span>DynamoDB registry</span>
+              <strong>Observability</strong>
+              <span>Grafana + Prometheus</span>
+            </div>
+            <div>
+              <strong>IaC</strong>
+              <span>Terraform (zero-click ops)</span>
+            </div>
+            <div>
+              <strong>CI/CD</strong>
+              <span>GitHub Actions pipelines</span>
             </div>
           </div>
         </div>
@@ -78,9 +89,11 @@ const LandingZonePage = () => {
           <h2>What is this project for?</h2>
         </div>
         <ul className="bullet-grid">
-          <li>Demonstrate an end-to-end AWS setup with secure auth + GraphQL</li>
-          <li>Practice real-world patterns: token registry, least privilege, observability</li>
-          <li>Show infrastructure as a first-class feature via interactive diagram</li>
+          <li>Show a production-grade AWS architecture with clear request boundaries and managed services</li>
+          <li>Practice Terraform-first infrastructure, zero-click ops, and repeatable CI/CD rollouts</li>
+          <li>Model a secure Up Bank integration: token vaulting, least-privilege access, and audit-ready flows</li>
+          <li>Teach how DNS, TLS, and routing shape frontend, API, and auth entry points</li>
+          <li>Expose observability as a core requirement (metrics, dashboards, and failure modes)</li>
         </ul>
       </section>
 
@@ -99,13 +112,26 @@ const LandingZonePage = () => {
             </a>
             .
           </li>
-          <li>Sign in with Cognito.</li>
           <li>
-            Register your PAT (paste it once; store securely in token registry; never show
-            full token again).
+            Go to the app and sign in. If you are new, choose “Register new user”.
           </li>
-          <li>After registration, the UI becomes read-only and can query account summaries.</li>
+          <li>
+            Email verification is required. Provide a valid email address and use the token
+            sent to your inbox to verify the account.
+          </li>
+          <li>
+            After registration, the UI prompts for your PAT. Paste the token and submit.
+          </li>
+          <li>
+            Once the PAT is stored, the UI switches to read-only mode and can query your
+            account information.
+          </li>
         </ol>
+        <div className="get-started-actions">
+          <a className="button primary" href="/app">
+            Go to App
+          </a>
+        </div>
       </section>
 
       <section className="landing-grid">
@@ -116,19 +142,25 @@ const LandingZonePage = () => {
           </div>
           <ul className="learning-list">
             <li>
-              <strong>AuthN/AuthZ:</strong> Cognito + JWT
+              <strong>AuthN/AuthZ:</strong> Cognito, JWT, and protected UI flows
             </li>
             <li>
-              <strong>API layer:</strong> AppSync resolvers
+              <strong>API layer:</strong> AppSync resolvers and pipeline functions
             </li>
             <li>
-              <strong>Data:</strong> DynamoDB single-table design basics (pk/sk)
+              <strong>Data:</strong> DynamoDB access patterns and token vaulting
             </li>
             <li>
-              <strong>Networking:</strong> domain + TLS + ALB ingress
+              <strong>Networking:</strong> Route53, ACM, ALB ingress, and egress via NAT
             </li>
             <li>
-              <strong>Ops:</strong> basic monitoring hooks
+              <strong>Ops:</strong> Prometheus/Grafana, alerts, and failure triage
+            </li>
+            <li>
+              <strong>Delivery:</strong> Terraform IaC and GitHub Actions pipelines
+            </li>
+            <li>
+              <strong>Architecture:</strong> Public endpoints vs managed services vs VPC workloads
             </li>
           </ul>
         </section>
@@ -143,24 +175,53 @@ const LandingZonePage = () => {
           </div>
           <ol className="step-list">
             <li>
-              <strong>Phase 0:</strong> Stand up the VPC + EKS baseline with a simple Nginx
-              hello-world deployment.
+              <strong>Phase 01:</strong> Stand up cluster, VPC, EKS with nginx hello world
+              deployed via Kubernetes files + Prometheus/Grafana deployments.
             </li>
             <li>
-              <strong>Phase 1:</strong> Validate ingress, TLS, and routing through Route53
-              + ACM + ALB.
+              <strong>Phase 02:</strong> Monitoring with Prometheus/Grafana.
             </li>
             <li>
-              <strong>Phase 2:</strong> Add observability (Prometheus/Grafana) to surface
-              cluster health and app metrics.
+              <strong>Phase 03:</strong> Application / Auth Layer - stand up Cognito,
+              AppSync, DynamoDB and a simple UI with a mock profile query via AppSync.
             </li>
             <li>
-              <strong>Phase 3:</strong> Introduce Cognito auth + AppSync, then wire
-              DynamoDB for PAT storage.
+              <strong>Phase 04:</strong> UpBank integration - token registration, GraphQL
+              pipeline resolvers to retrieve Up Bank API data, UI lists accounts.
             </li>
             <li>
-              <strong>Phase 4:</strong> Harden and evolve: move from raw Kubernetes YAML
-              toward Kustomize, then Helm chart packaging.
+              <strong>Phase 05:</strong> CI/CD - GitHub Actions workflows for infra and
+              app rollout automation.
+            </li>
+            <li>
+              <strong>Phase 06:</strong> Route53 setup with custom domains: `api.upbank-lab.*`
+              (API), `auth.upbank-lab.*` (Auth), `upbank-lab.*` (UI).
+            </li>
+          </ol>
+          <div className="section-header">
+            <p className="eyebrow">Upcoming</p>
+            <h3>Planned improvements</h3>
+          </div>
+          <ol className="step-list">
+            <li>
+              <strong>Phase 07:</strong> Infra improvements - move frontend config to
+              Terraform + Parameter Store/S3; update infra to use Kustomize.
+            </li>
+            <li>
+              <strong>Phase 08:</strong> Infra improvements - deploy frontend via Helm charts.
+            </li>
+            <li>
+              <strong>Phase 09:</strong> Infra improvements - refactor Terraform into modular
+              reusable components.
+            </li>
+            <li>
+              <strong>Phase 10:</strong> UI improvements - add transactions support and
+              notification configuration shell.
+            </li>
+            <li>
+              <strong>Phase 11:</strong> Webhooks/Notifications - implement transaction
+              notifications via webhooks (settled/created/deleted), opt-in browser alerts
+              via GraphQL realtime API, and email fallback.
             </li>
           </ol>
         </section>
@@ -303,7 +364,7 @@ const ArchitectureExplorer = () => {
     const dx = to.x - from.x
     const dy = to.y - from.y
     const distance = Math.hypot(dx, dy) || 1
-    const inset = 100
+    const inset = 120
     const startOffset = Math.min(inset, distance * 0.3)
     const endOffset = Math.min(inset, distance * 0.3)
     const startX = from.x + (dx / distance) * startOffset
@@ -365,21 +426,33 @@ const ArchitectureExplorer = () => {
                 </marker>
               </defs>
               {edges.map((edge) => {
-                const from = nodeById[edge.from]
-                const to = nodeById[edge.to]
+                  const from = nodeById[edge.from]
+                  const to = nodeById[edge.to]
                   if (!from || !to) return null
-                  const highlighted = isHighlighted(edge.group)
                   const { startX, startY, endX, endY } = getEdgePoints(from, to)
+                  const midX = (startX + endX) / 2
+                  const midY = (startY + endY) / 2
                   return (
-                    <line
-                      key={edge.id}
-                      x1={startX}
-                      y1={startY}
-                      x2={endX}
-                      y2={endY}
-                      className={`diagram-edge ${edge.group} ${highlighted ? 'is-active' : 'is-muted'}`}
-                      markerEnd="url(#arrow)"
-                    />
+                    <g key={edge.id}>
+                      <line
+                        x1={startX}
+                        y1={startY}
+                        x2={endX}
+                        y2={endY}
+                        className={`diagram-edge ${edge.group}`}
+                        markerEnd="url(#arrow)"
+                      />
+                      {edge.label && (
+                        <text
+                          x={midX}
+                          y={midY - 8}
+                          className="edge-label"
+                          textAnchor="middle"
+                        >
+                          {edge.label}
+                        </text>
+                      )}
+                    </g>
                   )
                 })}
             </svg>

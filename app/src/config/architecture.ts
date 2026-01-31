@@ -1,4 +1,4 @@
-export type ArchitectureGroup = 'core' | 'observability' | 'future' | 'base'
+export type ArchitectureGroup = 'core' | 'observability' | 'future' | 'base' | 'ui' | 'api' | 'auth' | 'tls'
 
 export type ArchitectureNode = {
   id: string
@@ -18,6 +18,7 @@ export type ArchitectureEdge = {
   id: string
   from: string
   to: string
+  label?: string
   group: ArchitectureGroup
 }
 
@@ -28,7 +29,7 @@ export type ArchitectureZone = {
   y: number
   width: number
   height: number
-  tone: 'region' | 'vpc' | 'az' | 'public' | 'private'
+  tone: 'region' | 'vpc' | 'az' | 'public' | 'private' | 'managed'
 }
 
 export type ArchitectureConfig = {
@@ -39,192 +40,468 @@ export type ArchitectureConfig = {
   edges: ArchitectureEdge[]
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// LAYOUT DESIGN
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// REQUEST FLOW:
+//   Browser → Route53 (DNS) → Endpoint based on domain:
+//     - upbank-lab.*      → ALB → EKS       (UI flow - blue)
+//     - api.upbank-lab.*  → AppSync         (API flow - orange)
+//     - auth.upbank-lab.* → Cognito         (Auth flow - purple)
+//
+// ACM CERTIFICATES:
+//   ACM provides TLS certs TO endpoints (not Route53):
+//     - ACM → ALB (TLS termination for UI)
+//     - ACM → AppSync (custom domain TLS)
+//     - ACM → Cognito (custom domain TLS)
+//   Route53 is only used for DNS validation of cert ownership.
+//
+// EDGE COLORS (group):
+//   - 'ui'   → Blue   - Frontend/UI traffic (upbank-lab.*)
+//   - 'api'  → Orange - API traffic (api.upbank-lab.*)
+//   - 'auth' → Purple - Auth traffic (auth.upbank-lab.*)
+//   - 'tls'  → Gray   - TLS certificate provisioning
+//   - 'base' → Teal   - Infrastructure/internal
+//
+// ═══════════════════════════════════════════════════════════════════════════
+
 export const architectureConfig: ArchitectureConfig = {
-  width: 1500,
-  height: 820,
+  width: 1600,
+  height: 950,
+
   zones: [
-    { id: 'region', label: 'AWS Region (ap-southeast-2)', x: 60, y: 100, width: 1360, height: 700, tone: 'region' },
-    { id: 'vpc', label: 'VPC 10.0.0.0/16', x: 140, y: 180, width: 1220, height: 540, tone: 'vpc' },
-    { id: 'az-a', label: 'Availability Zone A', x: 160, y: 240, width: 520, height: 420, tone: 'az' },
-    { id: 'az-b', label: 'Availability Zone B', x: 780, y: 240, width: 520, height: 420, tone: 'az' },
-    { id: 'public-a', label: 'Public Subnet', x: 190, y: 280, width: 470, height: 150, tone: 'public' },
-    { id: 'private-a', label: 'Private Subnet', x: 190, y: 460, width: 470, height: 170, tone: 'private' },
-    { id: 'public-b', label: 'Public Subnet', x: 810, y: 280, width: 470, height: 150, tone: 'public' },
-    { id: 'private-b', label: 'Private Subnet', x: 810, y: 460, width: 470, height: 170, tone: 'private' },
+    // ═══════════════════════════════════════════════════════════════
+    // AWS REGION
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'region',
+      label: 'AWS Region (ap-southeast-2)',
+      x: 400,
+      y: 180,
+      width: 700,
+      height: 640,
+      tone: 'region',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // VPC - Network boundary
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'vpc',
+      label: 'VPC 10.0.0.0/16',
+      x: 420,
+      y: 280,
+      width: 660,
+      height: 520,
+      tone: 'vpc',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // AVAILABILITY ZONES
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'az-a',
+      label: 'Availability Zone A',
+      x: 440,
+      y: 325,
+      width: 305,
+      height: 455,
+      tone: 'az',
+    },
+    {
+      id: 'az-b',
+      label: 'Availability Zone B',
+      x: 755,
+      y: 325,
+      width: 305,
+      height: 455,
+      tone: 'az',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // SUBNETS
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'public-a',
+      label: 'Public Subnet',
+      x: 460,
+      y: 370,
+      width: 265,
+      height: 190,
+      tone: 'public',
+    },
+    {
+      id: 'private-a',
+      label: 'Private Subnet',
+      x: 460,
+      y: 580,
+      width: 265,
+      height: 180,
+      tone: 'private',
+    },
+    {
+      id: 'public-b',
+      label: 'Public Subnet',
+      x: 775,
+      y: 370,
+      width: 265,
+      height: 190,
+      tone: 'public',
+    },
+    {
+      id: 'private-b',
+      label: 'Private Subnet',
+      x: 775,
+      y: 580,
+      width: 265,
+      height: 180,
+      tone: 'private',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // AWS MANAGED SERVICES - Outside VPC
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'managed-services',
+      label: 'AWS Managed Services',
+      x: 1150,
+      y: 230,
+      width: 280,
+      height: 560,
+      tone: 'managed',
+    },
   ],
+
   nodes: [
+    // ═══════════════════════════════════════════════════════════════
+    // USER BROWSER - Entry point
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'browser',
       label: 'User Browser',
       description: 'The read-only React UI where the lab starts and ends.',
-      why: 'Routes through Route53 for three paths: (1) load SPA assets from EKS, (2) send GraphQL API calls to AppSync, and (3) go through Cognito for auth.',
+      why: 'All requests start here. DNS queries go to Route53 first, which resolves to the appropriate endpoint based on domain.',
       security: 'Tokens never live in the UI; only masked status is shown after registration.',
-      failure: 'If the UI fails to load, check the EKS ingress and static asset delivery.',
-      x: 70,
-      y: 420,
-      group: 'core',
+      failure: 'If the UI fails to load, check DNS resolution and target endpoint health.',
+      x: 140,
+      y: 520,
+      group: 'base',
       category: 'edge',
       icon: 'user',
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ROUTE53 - DNS resolution (all traffic flows through here first)
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'route53',
       label: 'Route53',
-      description: 'Public DNS for the UI, API, and Cognito Hosted UI.',
-      why: 'User traffic hits Route53 for frontend load (EKS), API calls (AppSync), and auth flows (Cognito).',
-      security: 'DNS changes are tightly controlled with IaC and audit trails.',
-      failure: 'Misconfigured records lead to routing or validation failures.',
-      x: 420,
-      y: 220,
+      description: 'Public DNS that resolves all three application domains.',
+      why: 'Every browser request first queries Route53 to resolve the domain. Returns endpoint addresses for upbank-lab.*, api.upbank-lab.*, and auth.upbank-lab.*',
+      security: 'DNS changes controlled via IaC. Supports DNSSEC. Also used for ACM certificate DNS validation.',
+      failure: 'Misconfigured records cause resolution failures. Check hosted zone and record sets.',
+      x: 140,
+      y: 250,
       group: 'base',
       category: 'edge',
       icon: 'route53',
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ACM - TLS certificates (provides certs to TLS-terminating endpoints)
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'acm',
       label: 'ACM Certificates',
-      description: 'Managed TLS certificates for UI, Cognito, and AppSync domains.',
-      why: 'Automates certificate rotation and keeps TLS managed.',
-      security: 'Certificates are validated via DNS and scoped to the domain.',
-      failure: 'Failed validation or missing records can break HTTPS.',
-      x: 640,
-      y: 220,
-      group: 'base',
+      description: 'Managed TLS certificates for all three custom domains.',
+      why: 'Provides TLS certificates to ALB, AppSync, and Cognito for HTTPS termination. Certificates are validated via Route53 DNS records.',
+      security: 'Auto-renewed certificates. Private keys never leave AWS. DNS validation proves domain ownership.',
+      failure: 'Expired or invalid certificates cause HTTPS errors. Check validation status in ACM console.',
+      x: 990,
+      y: 110,
+      group: 'tls',
       category: 'edge',
       icon: 'acm',
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // INTERNET GATEWAY - VPC boundary
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'internet-gateway',
       label: 'Internet Gateway',
-      description: 'Enables public routing for the VPC.',
-      why: 'Required for public subnets and external connectivity.',
-      security: 'Route tables control which subnets are exposed.',
-      failure: 'Missing routes or IGW attachments cause outbound failures.',
-      x: 870,
-      y: 220,
+      description: 'Enables public internet connectivity for the VPC.',
+      why: 'Required for ALB to receive inbound traffic and for NAT Gateway outbound access.',
+      security: 'Route tables and security groups control traffic flow.',
+      failure: 'Missing routes or detached IGW causes connectivity failures.',
+      x: 760,
+      y: 180,
       group: 'base',
       category: 'edge',
       icon: 'igw',
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ALB - Frontend ingress (Public Subnet A)
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'alb',
       label: 'ALB Ingress',
-      description: 'Ingress controller for routing traffic into EKS.',
-      why: 'Separates edge traffic from the cluster and enables HTTPS routing rules.',
-      security: 'Managed security groups control inbound traffic to the cluster.',
-      failure: 'Check target group health when responses are 5xx or 4xx.',
-      x: 480,
-      y: 360,
-      group: 'base',
+      description: 'Application Load Balancer for the frontend UI.',
+      why: 'Receives traffic for upbank-lab.* after Route53 DNS resolution. Terminates TLS using ACM certificate and routes to EKS.',
+      security: 'Security groups restrict to HTTPS (443). WAF can be attached.',
+      failure: 'Check target group health, listener rules, and ACM certificate attachment.',
+      x: 593,
+      y: 470,
+      group: 'ui',
       category: 'edge',
       icon: 'alb',
     },
-    {
-      id: 'eks-frontend',
-      label: 'EKS / Frontend (Nginx)',
-      description: 'Hosts the static React SPA behind Nginx.',
-      why: 'Keeps the lab focused on infra and auth without a custom backend.',
-      security: 'No secrets are baked into the image; runtime config is read-only.',
-      failure: 'Watch pod health and Nginx logs for asset routing issues.',
-      x: 480,
-      y: 540,
-      group: 'base',
-      category: 'compute',
-      icon: 'eks',
-    },
-    {
-      id: 'cognito',
-      label: 'Cognito User Pool',
-      description: 'Handles OAuth2 authentication and JWT issuance.',
-      why: 'Provides managed auth so the lab can focus on architecture patterns.',
-      security: 'JWTs are validated by AppSync; no passwords flow through the UI.',
-      failure: 'Hosted UI misconfigurations appear as callback or token errors.',
-      x: 1180,
-      y: 330,
-      group: 'core',
-      category: 'auth',
-      icon: 'cognito',
-    },
-    {
-      id: 'appsync',
-      label: 'AppSync GraphQL API',
-      description: 'GraphQL facade that orchestrates Up Bank calls.',
-      why: 'Centralizes API policy, caching, and request mapping.',
-      security: 'Authorizes via Cognito and restricts access with least privilege.',
-      failure: 'Resolver errors show up as GraphQL errors; check pipeline steps.',
-      x: 1180,
-      y: 450,
-      group: 'core',
-      category: 'compute',
-      icon: 'appsync',
-    },
-    {
-      id: 'dynamodb',
-      label: 'DynamoDB Token Registry',
-      description: 'Stores the user-scoped Up PAT for downstream calls.',
-      why: 'Demonstrates a secure token vault with per-user ownership.',
-      security: 'Encrypted at rest; tokens never return to the UI once saved.',
-      failure: 'Missing or invalid tokens surface as 401s in GraphQL calls.',
-      x: 1180,
-      y: 570,
-      group: 'core',
-      category: 'data',
-      icon: 'dynamodb',
-    },
-    {
-      id: 'up-api',
-      label: 'Up Bank API',
-      description: 'External dependency that returns account data.',
-      why: 'Adds real-world constraints and rate-limits to the lab.',
-      security: 'Calls are made server-side using the stored PAT.',
-      failure: 'Expect 429s or 5xx when the external API is unavailable.',
-      x: 1410,
-      y: 450,
-      group: 'base',
-      category: 'external',
-      icon: 'api',
-    },
-    {
-      id: 'observability',
-      label: 'Prometheus / Grafana',
-      description: 'Metrics and dashboards for EKS and app health.',
-      why: 'Observability is a first-class outcome of the lab.',
-      security: 'Dashboards are protected behind cluster auth and scoped permissions.',
-      failure: 'Missing metrics usually mean scraping or service discovery issues.',
-      x: 980,
-      y: 560,
-      group: 'observability',
-      category: 'ops',
-      icon: 'cloudwatch',
-    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // NAT GATEWAY - Outbound internet (Public Subnet B)
+    // ═══════════════════════════════════════════════════════════════
     {
       id: 'nat-gateway',
       label: 'NAT Gateway',
       description: 'Provides outbound internet access for private subnets.',
-      why: 'Lets private workloads reach external services without public IPs.',
-      security: 'Keeps workloads private while enabling egress.',
-      failure: 'Missing routes or exhausted NAT can block outbound traffic.',
-      x: 980,
-      y: 360,
+      why: 'Allows EKS pods to pull container images and reach external APIs if needed.',
+      security: 'One-way outbound only. Private workloads remain unexposed.',
+      failure: 'Check Elastic IP association and route table entries.',
+      x: 908,
+      y: 470,
       group: 'base',
       category: 'edge',
       icon: 'nat',
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // EKS FRONTEND - Application workload (Private Subnet A)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'eks-frontend',
+      label: 'EKS / Frontend (Nginx)',
+      description: 'Kubernetes cluster hosting the React SPA via Nginx.',
+      why: 'Serves the static frontend for upbank-lab.* domain. Receives traffic from ALB.',
+      security: 'Pods in private subnet. No direct internet exposure. Uses IRSA for AWS API access.',
+      failure: 'Check pod status, Nginx logs, and ALB target group registration.',
+      x: 593,
+      y: 675,
+      group: 'ui',
+      category: 'compute',
+      icon: 'eks',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // OBSERVABILITY - Monitoring stack (Private Subnet B)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'observability',
+      label: 'Prometheus / Grafana',
+      description: 'Metrics collection and visualization for the cluster.',
+      why: 'Provides observability into EKS workloads and application metrics.',
+      security: 'Runs in private subnet. Access via ingress or kubectl port-forward.',
+      failure: 'Check ServiceMonitor CRDs and Prometheus scrape targets.',
+      x: 908,
+      y: 675,
+      group: 'observability',
+      category: 'ops',
+      icon: 'cloudwatch',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // AWS MANAGED SERVICES (inside managed-services zone)
+    // ═══════════════════════════════════════════════════════════════
+
+    // COGNITO - auth.upbank-lab.*
+    {
+      id: 'cognito',
+      label: 'Cognito User Pool',
+      description: 'Managed authentication service with hosted UI.',
+      why: 'Handles auth.upbank-lab.* traffic. Provides OAuth2/OIDC flows and issues JWTs.',
+      security: 'AWS managed. Supports MFA, password policies. Custom domain uses ACM certificate.',
+      failure: 'Check app client settings, callback URLs, and custom domain configuration.',
+      x: 1290,
+      y: 330,
+      group: 'auth',
+      category: 'auth',
+      icon: 'cognito',
+    },
+
+    // APPSYNC - api.upbank-lab.*
+    {
+      id: 'appsync',
+      label: 'AppSync GraphQL API',
+      description: 'Managed GraphQL service for the API layer.',
+      why: 'Handles api.upbank-lab.* traffic. Validates Cognito JWTs and orchestrates data operations.',
+      security: 'Cognito authorizer validates tokens. Custom domain uses ACM certificate.',
+      failure: 'Check resolver mappings, authorizer config, and CloudWatch logs.',
+      x: 1290,
+      y: 520,
+      group: 'api',
+      category: 'compute',
+      icon: 'appsync',
+    },
+
+    // DYNAMODB - Token storage
+    {
+      id: 'dynamodb',
+      label: 'DynamoDB Token Registry',
+      description: 'NoSQL database storing user PATs securely.',
+      why: 'AppSync resolvers read/write tokens here. Keyed by Cognito user sub.',
+      security: 'Encrypted at rest. IAM restricts access to AppSync service role only.',
+      failure: 'Check table status, IAM permissions, and VTL resolver mappings.',
+      x: 1290,
+      y: 710,
+      group: 'api',
+      category: 'data',
+      icon: 'dynamodb',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // EXTERNAL SERVICE
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'up-api',
+      label: 'Up Bank API',
+      description: 'External banking API for account data.',
+      why: 'AppSync HTTP resolver fetches account data using stored PAT from DynamoDB.',
+      security: 'PAT retrieved per-request from DynamoDB. Never exposed to frontend.',
+      failure: 'Handle 429 rate limits and 5xx errors. Implement exponential backoff.',
+      x: 1650,
+      y: 515,
+      group: 'api',
+      category: 'external',
+      icon: 'api',
+    },
   ],
+
   edges: [
-    { id: 'browser-route53', from: 'browser', to: 'route53', group: 'base' },
-    { id: 'route53-alb', from: 'route53', to: 'alb', group: 'base' },
-    { id: 'route53-cognito', from: 'route53', to: 'cognito', group: 'base' },
-    { id: 'route53-appsync', from: 'route53', to: 'appsync', group: 'base' },
-    { id: 'acm-alb', from: 'acm', to: 'alb', group: 'base' },
-    { id: 'acm-cognito', from: 'acm', to: 'cognito', group: 'base' },
-    { id: 'acm-appsync', from: 'acm', to: 'appsync', group: 'base' },
-    { id: 'alb-eks', from: 'alb', to: 'eks-frontend', group: 'base' },
-    { id: 'eks-cognito', from: 'eks-frontend', to: 'cognito', group: 'base' },
-    { id: 'cognito-appsync', from: 'cognito', to: 'appsync', group: 'core' },
-    { id: 'appsync-dynamo', from: 'appsync', to: 'dynamodb', group: 'core' },
-    { id: 'appsync-up', from: 'appsync', to: 'up-api', group: 'base' },
-    { id: 'eks-observability', from: 'eks-frontend', to: 'observability', group: 'observability' },
-    { id: 'eks-nat', from: 'eks-frontend', to: 'nat-gateway', group: 'base' },
-    { id: 'nat-igw', from: 'nat-gateway', to: 'internet-gateway', group: 'base' },
+    // ═══════════════════════════════════════════════════════════════
+    // BROWSER → ROUTE53 (DNS lookup - all traffic starts here)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'browser-route53',
+      from: 'browser',
+      to: 'route53',
+      label: 'DNS lookup',
+      group: 'base',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ROUTE53 → ENDPOINTS (color-coded by traffic type)
+    // ═══════════════════════════════════════════════════════════════
+
+    // UI flow (blue) - upbank-lab.* → ALB
+    {
+      id: 'route53-alb',
+      from: 'route53',
+      to: 'alb',
+      label: 'upbank-lab.*',
+      group: 'ui',
+    },
+
+    // API flow (orange) - api.upbank-lab.* → AppSync
+    {
+      id: 'route53-appsync',
+      from: 'route53',
+      to: 'appsync',
+      label: 'api.upbank-lab.*',
+      group: 'api',
+    },
+
+    // Auth flow (purple) - auth.upbank-lab.* → Cognito
+    {
+      id: 'route53-cognito',
+      from: 'route53',
+      to: 'cognito',
+      label: 'auth.upbank-lab.*',
+      group: 'auth',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ACM → ENDPOINTS (TLS certificate provisioning)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      id: 'acm-alb',
+      from: 'acm',
+      to: 'alb',
+      label: 'TLS cert',
+      group: 'tls',
+    },
+    {
+      id: 'acm-appsync',
+      from: 'acm',
+      to: 'appsync',
+      label: 'TLS cert',
+      group: 'tls',
+    },
+    {
+      id: 'acm-cognito',
+      from: 'acm',
+      to: 'cognito',
+      label: 'TLS cert',
+      group: 'tls',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // VPC INTERNAL FLOWS
+    // ═══════════════════════════════════════════════════════════════
+
+    // ALB → EKS (UI flow continues)
+    {
+      id: 'alb-eks',
+      from: 'alb',
+      to: 'eks-frontend',
+      group: 'ui',
+    },
+
+    // EKS → Observability (metrics)
+    {
+      id: 'eks-observability',
+      from: 'eks-frontend',
+      to: 'observability',
+      group: 'observability',
+    },
+
+    // NAT → IGW (egress path)
+    {
+      id: 'nat-igw',
+      from: 'nat-gateway',
+      to: 'internet-gateway',
+      group: 'base',
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // AWS MANAGED SERVICE INTEGRATIONS
+    // ═══════════════════════════════════════════════════════════════
+
+    // Cognito → AppSync (JWT validation)
+    {
+      id: 'cognito-appsync',
+      from: 'cognito',
+      to: 'appsync',
+      label: 'JWT auth',
+      group: 'auth',
+    },
+
+    // AppSync → DynamoDB (token storage)
+    {
+      id: 'appsync-dynamo',
+      from: 'appsync',
+      to: 'dynamodb',
+      label: 'token lookup',
+      group: 'api',
+    },
+
+    // AppSync → Up Bank API (external fetch)
+    {
+      id: 'appsync-up',
+      from: 'appsync',
+      to: 'up-api',
+      label: 'fetch data',
+      group: 'api',
+    },
   ],
 }
