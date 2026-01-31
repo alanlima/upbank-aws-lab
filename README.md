@@ -275,7 +275,6 @@ Core files:
 
 * `app/src/pages/LandingZonePage.tsx`
 * `app/src/config/architecture.ts`
-* `app/src/api/tokenClient.ts`
 
 To extend it, update `architecture.ts` for new nodes/edges or replace the token client with AppSync calls.
 
