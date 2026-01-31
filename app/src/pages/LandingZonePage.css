@@ -50,11 +50,11 @@
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
   border: 1px solid rgba(var(--accent-rgb), 0.25);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(var(--surface-strong-rgb), 0.7);
 }
 
 .hero-card {
-  background: #ffffff;
+  background: var(--surface-strong);
   border-radius: 20px;
   padding: 1.7rem;
   border: 1px solid rgba(var(--accent-rgb), 0.2);
@@ -75,7 +75,7 @@
 .hero-highlights div {
   padding: 0.6rem 0.8rem;
   border-radius: 14px;
-  background: #f7fbfa;
+  background: var(--surface);
   border: 1px solid rgba(var(--accent-rgb), 0.2);
   display: grid;
   gap: 0.3rem;
@@ -144,11 +144,11 @@
 }
 
 .status.success {
-  color: #0c6a5c;
+  color: var(--status-success-ink);
 }
 
 .status.error {
-  color: #a14a08;
+  color: var(--status-warn-ink);
 }
 
 .learning-list {
@@ -160,7 +160,7 @@
 }
 
 .learning-list li {
-  background: #fffdf8;
+  background: var(--surface-strong);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 0.75rem 0.9rem;
@@ -182,7 +182,7 @@
   position: relative;
   border-radius: 20px;
   border: 1px solid rgba(var(--accent-rgb), 0.2);
-  background: #ffffff;
+  background: var(--diagram-canvas-bg);
   overflow: hidden;
   min-height: 920px;
   touch-action: none;
@@ -205,6 +205,14 @@
   z-index: 2;
 }
 
+:root[data-mode='dark'] .diagram-edges {
+  opacity: 0.7;
+}
+
+:root[data-mode='dark'] .diagram-edge {
+  stroke-width: 2.6;
+}
+
 .diagram-edge {
   stroke: rgba(var(--accent-rgb), 0.36);
   stroke-width: 2.3;
@@ -220,7 +228,7 @@
 }
 
 .diagram-edge.future {
-  stroke: #f29f63;
+  stroke: var(--accent-warm);
 }
 
 .diagram-edge.is-muted {
@@ -232,8 +240,8 @@
   transform: translate(-50%, -50%);
   padding: 0.95rem 1.1rem 1.05rem;
   border-radius: 14px;
-  border: 1px solid rgba(11, 26, 31, 0.2);
-  background: #ffffff;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
   font-size: 1.12rem;
   font-weight: 600;
   line-height: 1.2;
@@ -247,27 +255,27 @@
 }
 
 .diagram-node.edge {
-  background: #fff8ef;
+  background: var(--node-edge-bg);
 }
 
 .diagram-node.compute {
-  background: #eef6f4;
+  background: var(--node-compute-bg);
 }
 
 .diagram-node.auth {
-  background: #edf0fb;
+  background: var(--node-auth-bg);
 }
 
 .diagram-node.data {
-  background: #f2f7ff;
+  background: var(--node-data-bg);
 }
 
 .diagram-node.external {
-  background: #fff0e4;
+  background: var(--node-external-bg);
 }
 
 .diagram-node.ops {
-  background: #f7efff;
+  background: var(--node-ops-bg);
 }
 
 .diagram-node.is-muted {
@@ -310,6 +318,13 @@
   z-index: 4;
 }
 
+.diagram-controls .button {
+  background: var(--diagram-control-bg);
+  color: var(--diagram-control-ink);
+  border: 1px solid var(--diagram-control-border);
+  box-shadow: var(--diagram-control-shadow);
+}
+
 .diagram-shell.is-fullscreen {
   border-radius: 0;
   border: none;
@@ -319,7 +334,7 @@
   width: 100vw;
   height: 100vh;
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--diagram-canvas-bg);
 }
 
 .diagram-shell.is-fullscreen .diagram-controls {
@@ -328,7 +343,7 @@
 }
 
 .node-details {
-  background: #ffffff;
+  background: var(--surface-strong);
   border-radius: 18px;
   border: 1px solid var(--border);
   padding: 1.4rem;
@@ -395,15 +410,40 @@
   background: rgba(210, 241, 227, 0.22);
 }
 
+:root[data-mode='dark'] .diagram-zone {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-mode='dark'] .diagram-zone.region {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-mode='dark'] .diagram-zone.vpc {
+  border-color: rgba(var(--accent-rgb), 0.45);
+  background: rgba(var(--accent-rgb), 0.1);
+}
+
+:root[data-mode='dark'] .diagram-zone.public {
+  border-color: rgba(96, 165, 250, 0.6);
+  background: rgba(96, 165, 250, 0.16);
+}
+
+:root[data-mode='dark'] .diagram-zone.private {
+  border-color: rgba(45, 212, 191, 0.55);
+  background: rgba(45, 212, 191, 0.14);
+}
+
 .zone-label {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--ink-muted);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--diagram-zone-label-bg);
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
-  border: 1px solid rgba(11, 26, 31, 0.12);
+  border: 1px solid var(--diagram-zone-label-border);
 }
 
 @media (max-width: 980px) {
@@ -445,6 +485,11 @@
   background: rgba(255, 247, 230, 0.4);
 }
 
+:root[data-mode='dark'] .diagram-zone.managed {
+  border-color: rgba(251, 146, 60, 0.7);
+  background: rgba(251, 146, 60, 0.18);
+}
+
 /* ───────────────────────────────────────────────────────────────────────────
    EDGE COLORS BY TRAFFIC TYPE
    ─────────────────────────────────────────────────────────────────────────── */
@@ -474,9 +519,17 @@
   stroke-dasharray: 6, 4;
 }
 
+:root[data-mode='dark'] .diagram-edge.tls {
+  stroke: #cbd5f5;
+}
+
 /* Observability - Keep existing purple */
 .diagram-edge.observability {
   stroke: #7356c1;
+}
+
+:root[data-mode='dark'] .diagram-edge.observability {
+  stroke: #a78bfa;
 }
 
 /* Base/infrastructure - Keep existing teal */
@@ -490,8 +543,7 @@
    ─────────────────────────────────────────────────────────────────────────── */
 .edge-label {
   font-size: 0.7rem;
-  /* fill: #4b5563; */
-  fill: #9a0e0c;
+  fill: var(--diagram-label-ink);
   font-weight: 500;
   pointer-events: none;
   background: white;
@@ -504,7 +556,7 @@
   position: absolute;
   bottom: 4.5rem;
   left: 1rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(var(--surface-strong-rgb), 0.95);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.8rem 1rem;
