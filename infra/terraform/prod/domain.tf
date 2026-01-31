@@ -3,11 +3,52 @@ resource "aws_route53_zone" "root" {
   tags = local.tags
 }
 
-
-resource "aws_acm_certificate" "appsync" {
-  provider          = aws.use1 # AppSync will use CloudFront which requires certs in us-east-1 
-  domain_name       = local.api_fqdn
+##################################################################
+# Cognito User Pool Custom Domain with Route53 DNS Validation
+##################################################################
+resource "aws_acm_certificate" "cognito" {
+  provider          = aws.use1 # Cognito hosted UI requires certs in us-east-1 for CloudFront
+  domain_name       = local.auth_fqdn
   validation_method = "DNS"
+}
+
+resource "aws_route53_record" "cognito_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cognito.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      type   = dvo.resource_record_type
+      record = dvo.resource_record_value
+    }
+  }
+
+  zone_id = aws_route53_zone.root.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 300
+  records = [each.value.record]
+}
+
+resource "aws_acm_certificate_validation" "cognito" {
+  provider                = aws.use1
+  certificate_arn         = aws_acm_certificate.cognito.arn
+  validation_record_fqdns = [for r in aws_route53_record.cognito_cert_validation : r.fqdn]
+}
+
+resource "aws_cognito_user_pool_domain" "this" {
+  domain          = local.auth_fqdn
+  user_pool_id    = module.application.cognito_user_pool_id
+  certificate_arn = aws_acm_certificate_validation.cognito.certificate_arn
+}
+
+resource "aws_route53_record" "cognito" {
+  name    = aws_cognito_user_pool_domain.this.domain
+  type    = "A"
+  zone_id = aws_route53_zone.root.zone_id
+  alias {
+    name                   = aws_cognito_user_pool_domain.this.cloudfront_distribution_arn
+    zone_id                = aws_cognito_user_pool_domain.this.cloudfront_distribution_zone_id
+    evaluate_target_health = false
+  }
 }
 
 ##################################################################
@@ -60,6 +101,12 @@ resource "aws_route53_record" "ui_alias" {
 ##################################################################
 # AWS AppSync Custom Domain with Route53 DNS Validation
 ##################################################################
+
+resource "aws_acm_certificate" "appsync" {
+  provider          = aws.use1 # AppSync will use CloudFront which requires certs in us-east-1 
+  domain_name       = local.api_fqdn
+  validation_method = "DNS"
+}
 
 resource "aws_route53_record" "appsync_cert_validation" {
   for_each = {
