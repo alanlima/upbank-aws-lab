@@ -64,7 +64,7 @@ const AccountDetails = () => {
           <p>Review account metadata. Transactions will appear here soon.</p>
         </div>
         <div className="header-actions">
-          <button className="button secondary" onClick={() => navigate('/app')}>
+          <button className="button secondary" onClick={() => navigate('/app/accounts')}>
             Back to accounts
           </button>
           <button className="button secondary" onClick={() => navigate('/app/profile')}>

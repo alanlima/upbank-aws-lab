@@ -1,4 +1,5 @@
 import { getBuildMeta } from '../config/buildMeta'
+import ThemeToggle from './ThemeToggle'
 
 const BuildInfo = () => {
   const { commit, buildDateIso } = getBuildMeta()
@@ -7,12 +8,15 @@ const BuildInfo = () => {
     : 'n/a'
 
   return (
-    <div className="build-stamp" title="Build metadata">
-      <span>Build {commit}</span>
-      <span className="dot-separator" aria-hidden="true">
-        ·
-      </span>
-      <span>UTC {formattedDate}</span>
+    <div className="build-stamp">
+      <div className="build-meta" title="Build metadata">
+        <span>Build {commit}</span>
+        <span className="dot-separator" aria-hidden="true">
+          ·
+        </span>
+        <span>UTC {formattedDate}</span>
+      </div>
+      <ThemeToggle />
     </div>
   )
 }
