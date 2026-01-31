@@ -26,10 +26,15 @@
 }
 
 .hero-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.8rem;
   margin-top: 1.4rem;
+}
+
+.hero-actions .button {
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .hero-meta {
@@ -410,6 +415,10 @@
 @media (max-width: 720px) {
   .landing-hero {
     padding: 1.6rem;
+  }
+
+  .hero-actions {
+    grid-template-columns: 1fr;
   }
 
   .landing-panel {
