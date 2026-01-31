@@ -100,14 +100,19 @@ const AccountDetails = () => {
               <div>
                 <p className="eyebrow">Balance</p>
                 <strong>
-                  {account.balanceValue
-                    ? `${account.balanceValue} ${account.currencyCode ?? ''}`.trim()
-                    : 'Unavailable'}
+                  {account.balanceValue ? (
+                    <>
+                      <span className="balance-amount">{account.balanceValue}</span>{' '}
+                      <span className="balance-currency">{account.currencyCode ?? ''}</span>
+                    </>
+                  ) : (
+                    'Unavailable'
+                  )}
                 </strong>
               </div>
               <div>
                 <p className="eyebrow">Created</p>
-                <span className="mono">{formatDate(account.createdAt)}</span>
+                <span className="mono date-value">{formatDate(account.createdAt)}</span>
               </div>
             </div>
 
