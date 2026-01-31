@@ -175,12 +175,12 @@ module "application" {
 
   callback_urls = [
     "https://localhost:5173/callback",
-    "https://upbank-lab.alanlima.cloud/callback"
+    "https://${local.ui_fqdn}/callback"
   ]
 
   logout_urls = [
-    "https://localhost:5173/",
-    "https://upbank-lab.alanlima.cloud/"
+    "https://localhost:5173/logout",
+    "https://${local.ui_fqdn}/logout"
   ]
 
   tags = local.tags
