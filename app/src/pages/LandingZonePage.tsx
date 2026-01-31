@@ -492,7 +492,7 @@ const ArchitectureExplorer = () => {
                   refY="3"
                   orient="auto"
                 >
-                  <path d="M0,0 L0,6 L6,3 z" fill="#1b7f7a" />
+                  <path d="M0,0 L0,6 L6,3 z" fill="var(--accent)" />
                 </marker>
               </defs>
               {edges.map((edge) => {

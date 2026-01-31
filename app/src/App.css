@@ -102,13 +102,13 @@ p {
 .button.primary {
   background: var(--accent);
   color: #fffaf2;
-  box-shadow: 0 14px 30px rgba(27, 127, 122, 0.25);
+  box-shadow: 0 14px 30px rgba(var(--accent-rgb), 0.25);
 }
 
 .button.secondary {
-  background: transparent;
+  background: var(--surface);
   color: var(--accent-strong);
-  border: 1px solid rgba(20, 92, 88, 0.35);
+  border: 1px solid rgba(var(--accent-strong-rgb), 0.35);
 }
 
 .button:disabled {
@@ -203,7 +203,7 @@ p {
   height: 12px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 6px rgba(27, 127, 122, 0.12);
+  box-shadow: 0 0 0 6px rgba(var(--accent-rgb), 0.12);
 }
 
 .hint {
@@ -309,8 +309,8 @@ p {
 }
 
 .account-list-item.active {
-  border-color: rgba(27, 127, 122, 0.35);
-  box-shadow: 0 12px 26px rgba(27, 127, 122, 0.12);
+  border-color: rgba(var(--accent-rgb), 0.35);
+  box-shadow: 0 12px 26px rgba(var(--accent-rgb), 0.12);
 }
 
 .account-list-item strong {
@@ -454,10 +454,10 @@ p {
   border-radius: 14px;
   background: repeating-linear-gradient(
     135deg,
-    rgba(27, 127, 122, 0.08),
-    rgba(27, 127, 122, 0.08) 12px,
-    rgba(20, 92, 88, 0.08) 12px,
-    rgba(20, 92, 88, 0.08) 24px
+    rgba(var(--accent-rgb), 0.08),
+    rgba(var(--accent-rgb), 0.08) 12px,
+    rgba(var(--accent-strong-rgb), 0.08) 12px,
+    rgba(var(--accent-strong-rgb), 0.08) 24px
   );
   border: 1px solid var(--border);
 }
