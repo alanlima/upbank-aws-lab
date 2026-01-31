@@ -472,6 +472,16 @@
   .diagram-shell {
     min-height: 620px;
   }
+
+  .diagram-controls .fullscreen-toggle {
+    display: none;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .diagram-controls .fullscreen-toggle {
+    display: none;
+  }
 }
 
 

@@ -558,7 +558,11 @@ const ArchitectureExplorer = () => {
             <button className="button secondary button-compact" type="button" onClick={() => handleZoom('out')}>
               - Zoom
             </button>
-            <button className="button secondary button-compact" type="button" onClick={handleToggleFullscreen}>
+            <button
+              className="button secondary button-compact fullscreen-toggle"
+              type="button"
+              onClick={handleToggleFullscreen}
+            >
               {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             </button>
             <button className="button secondary button-compact" type="button" onClick={handleReset}>
