@@ -630,4 +630,14 @@ p {
   .split {
     grid-template-columns: 1fr;
   }
+
+  .build-stamp {
+    position: static;
+    margin-top: 1.5rem;
+    justify-items: start;
+  }
+
+  .theme-toggle-group {
+    display: none;
+  }
 }
