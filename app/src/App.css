@@ -609,6 +609,11 @@ p {
 }
 
 @media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+    padding: 1.5rem 1rem 2.5rem;
+  }
+
   .card {
     padding: 2rem 1.5rem;
   }
@@ -634,10 +639,12 @@ p {
   .build-stamp {
     position: static;
     margin-top: 1.5rem;
-    justify-items: start;
+    width: min(1120px, 96vw);
+    justify-items: center;
   }
 
   .theme-toggle-group {
-    display: none;
+    width: 100%;
+    justify-content: center;
   }
 }
