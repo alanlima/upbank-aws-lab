@@ -3,6 +3,7 @@ import type { PointerEvent as ReactPointerEvent, WheelEvent as ReactWheelEvent }
 import './LandingZonePage.css'
 import { architectureConfig } from '../config/architecture'
 import type { ArchitectureNode } from '../config/architecture'
+import ThemeToggle from '../components/ThemeToggle'
 import {
   AwsAlbIcon,
   AwsApiGatewayIcon,
@@ -170,6 +171,10 @@ const LandingZonePage = () => {
         <div className="section-header">
           <p className="eyebrow">Onboarding</p>
           <h2>How to log on</h2>
+        </div>
+        <div className="theme-choice">
+          <span className="theme-choice__label">Select your theme</span>
+          <ThemeToggle />
         </div>
         <ol className="step-list">
           <li>You must have an Up Bank account.</li>
