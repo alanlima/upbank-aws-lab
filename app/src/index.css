@@ -198,7 +198,125 @@
   --hero-grad-end: rgba(154, 207, 255, 0.95);
 }
 
-:root[data-mode='dark'] {
+/* Default theme - Dark mode (Minimal/Airy Dark) */
+:root[data-mode='dark']:not([data-theme='vivid']) {
+  --bg-base: #14120f;
+  --page-bg-base: #14120f;
+  --bg-surface: #1f1d1a;
+  --bg-surface-rgb: 31, 29, 26;
+  --surface: #1f1d1a;
+  --surface-strong: #28251f;
+  --surface-rgb: 31, 29, 26;
+  --surface-strong-rgb: 40, 37, 31;
+
+  --page-bg-spot-1: #1a2420;
+  --page-bg-spot-2: #1f2a25;
+
+  --border: #3a3530;
+  --border-subtle: #2d2a25;
+  --border-strong: #4a4540;
+
+  --ink: #f5f0e8;
+  --text-primary: #f5f0e8;
+  --ink-secondary: #d0c8b8;
+  --text-secondary: #d0c8b8;
+  --ink-muted: #9a9080;
+  --text-tertiary: #9a9080;
+  --text-muted: #9a9080;
+  --eyebrow-ink: #a8a090;
+  --eyebrow-weight: 600;
+
+  --card-grad-start: #322f28;
+  --card-grad-end: #322f28;
+  --card-border: #454038;
+
+  --account-list-item-bg: #322f28;
+  --account-list-item-border: #454038;
+  --account-list-item-hover-shadow: rgba(0, 0, 0, 0.25);
+  --account-list-item-hover-border: #5a5548;
+
+  --card-balance-value: #ffffff;
+  --card-balance-currency: #a8a090;
+  --balance-ink: #ffffff;
+  --card-date: #908878;
+
+  --accent: #1b7f7a;
+  --accent-rgb: 27, 127, 122;
+  --accent-strong: #4fd1c5;
+  --accent-strong-rgb: 79, 209, 197;
+  --accent-muted: #158a85;
+  --accent-subtle: rgba(27, 127, 122, 0.15);
+
+  --accent-warm: #f29f63;
+  --accent-warm-rgb: 242, 159, 99;
+
+  --badge-bg: rgba(27, 127, 122, 0.12);
+  --badge-ink: #4fd1c5;
+  --badge-border: rgba(27, 127, 122, 0.25);
+
+  --badge-muted-text: #d4ccc0;
+  --badge-muted-bg: rgba(100, 95, 85, 0.3);
+  --badge-muted-border: #504a40;
+
+  --count-pill-bg: rgba(27, 127, 122, 0.15);
+  --count-pill-ink: #4fd1c5;
+  --count-pill-border: rgba(27, 127, 122, 0.25);
+
+  --chip-ink: #b8b0a0;
+  --chip-border: #504a40;
+  --pill-bg: rgba(27, 127, 122, 0.1);
+
+  --button-primary-bg: #1b7f7a;
+  --button-primary-ink: #ffffff;
+  --button-primary-hover: #4fd1c5;
+
+  --button-secondary-bg: rgba(27, 127, 122, 0.08);
+  --button-secondary-ink: #d0c8b8;
+  --button-secondary-border: #4a4540;
+  --button-secondary-hover-border: #4fd1c5;
+
+  --status-success-bg: rgba(27, 127, 122, 0.15);
+  --status-success-ink: #4fd1c5;
+  --status-warn-bg: rgba(242, 159, 99, 0.15);
+  --status-warn-ink: #f29f63;
+  --status-error-bg: rgba(239, 68, 68, 0.15);
+  --status-error-ink: #f87171;
+
+  --input-bg: #1f1d1a;
+  --input-border: #4a4540;
+  --input-border-focus: #4fd1c5;
+  --input-placeholder: #706860;
+
+  --placeholder-tile-bg: #2d2a25;
+  --placeholder-tile-border: #3a3530;
+
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.3);
+  --shadow-button: 0 10px 24px rgba(27, 127, 122, 0.2);
+
+  --hero-grad-start: rgba(40, 37, 31, 0.95);
+  --hero-grad-end: rgba(31, 29, 26, 0.98);
+
+  --diagram-canvas-bg: #e8e4df;
+  --diagram-control-bg: rgba(27, 127, 122, 0.2);
+  --diagram-control-ink: #14120f;
+  --diagram-control-border: rgba(27, 127, 122, 0.4);
+  --diagram-control-shadow: 0 12px 26px rgba(0, 0, 0, 0.3);
+  --diagram-label-ink: #14120f;
+  --diagram-zone-label-bg: rgba(255, 255, 255, 0.9);
+  --diagram-zone-label-border: rgba(0, 0, 0, 0.1);
+
+  --node-edge-bg: rgba(242, 159, 99, 0.2);
+  --node-compute-bg: rgba(27, 127, 122, 0.2);
+  --node-auth-bg: rgba(129, 140, 248, 0.2);
+  --node-data-bg: rgba(96, 165, 250, 0.2);
+  --node-external-bg: rgba(251, 146, 60, 0.2);
+  --node-ops-bg: rgba(167, 139, 250, 0.2);
+}
+
+/* Vivid theme - Dark mode (Teal-Blue Harmony) */
+:root[data-mode='dark'][data-theme='vivid'] {
   --bg-base: #0f1419;
   --bg-surface: #1a1f2c;
   --bg-surface-rgb: 26, 31, 44;

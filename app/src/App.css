@@ -561,6 +561,13 @@ p {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.theme-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
 .theme-toggle:hover {
   transform: translateY(-1px);
   border-color: var(--accent);

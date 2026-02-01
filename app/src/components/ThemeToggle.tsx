@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { getThemeMode, setThemeMode } from '../config/theme'
-import type { ThemeMode } from '../config/theme'
+import { getThemeMode, getThemeName, setThemeMode, setThemeName } from '../config/theme'
+import type { ThemeMode, ThemeName } from '../config/theme'
 
 const SunIcon = () => (
   <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
@@ -20,28 +20,62 @@ const MoonIcon = () => (
   </svg>
 )
 
+const PaletteIcon = () => (
+  <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+    <path
+      d="M12 3a9 9 0 1 0 0 18h2.2a2.3 2.3 0 0 0 0-4.6h-1.1a1.7 1.7 0 0 1 0-3.4h2.4A3.5 3.5 0 0 0 19 9.5 6.5 6.5 0 0 0 12 3zm-4 8.2a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm3.2-3a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zm4.2 0a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
 const ThemeToggle = () => {
   const [mode, setMode] = useState<ThemeMode>(() => getThemeMode())
+  const [theme, setTheme] = useState<ThemeName>(() => getThemeName())
 
-  const handleToggle = () => {
+  const handleToggleMode = () => {
     const next = mode === 'dark' ? 'light' : 'dark'
     setMode(next)
     setThemeMode(next)
   }
 
+  const handleToggleTheme = () => {
+    const next = theme === 'vivid' ? 'classic' : 'vivid'
+    setTheme(next)
+    setThemeName(next)
+  }
+
   return (
-    <button
-      className="theme-toggle"
-      type="button"
-      onClick={handleToggle}
-      aria-pressed={mode === 'dark'}
-      aria-label="Toggle dark mode"
-    >
-      <span className="theme-toggle__icon" aria-hidden="true">
-        {mode === 'dark' ? <MoonIcon /> : <SunIcon />}
-      </span>
-      <span className="theme-toggle__label">{mode === 'dark' ? 'Dark mode' : 'Light mode'}</span>
-    </button>
+    <div className="theme-toggle-group" role="group" aria-label="Theme toggles">
+      <button
+        className="theme-toggle"
+        type="button"
+        onClick={handleToggleMode}
+        aria-pressed={mode === 'dark'}
+        aria-label="Toggle dark mode"
+      >
+        <span className="theme-toggle__icon" aria-hidden="true">
+          {mode === 'dark' ? <MoonIcon /> : <SunIcon />}
+        </span>
+        <span className="theme-toggle__label">
+          {mode === 'dark' ? 'Dark mode' : 'Light mode'}
+        </span>
+      </button>
+      <button
+        className="theme-toggle"
+        type="button"
+        onClick={handleToggleTheme}
+        aria-pressed={theme === 'vivid'}
+        aria-label="Toggle color theme"
+      >
+        <span className="theme-toggle__icon" aria-hidden="true">
+          <PaletteIcon />
+        </span>
+        <span className="theme-toggle__label">
+          {theme === 'vivid' ? 'Vivid palette' : 'Classic palette'}
+        </span>
+      </button>
+    </div>
   )
 }
 
