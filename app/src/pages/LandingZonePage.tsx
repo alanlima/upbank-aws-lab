@@ -181,7 +181,7 @@ const LandingZonePage = () => {
           <li>
             Generate a Personal Access Token (PAT) in the Up Developer Portal using the
             official getting started instructions.{' '}
-            <a className="link" href="https://api.up.com.au/getting_started" target="_blank" rel="noreferrer">
+            <a className="link" href="https://api.up.com.au/getting_started" target="_blank" rel="noopener noreferrer">
               Learn how to get a PAT
             </a>
             .
